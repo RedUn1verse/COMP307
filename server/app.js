@@ -10,12 +10,12 @@ const app = express();
 
 // ================== App Config =======================
 
-// const authRoutes    = require('./routes/authroutes');
+const authRoutes    = require('./routes/authroutes');
 const bookingRoutes = require('./routes/bookingroutes');
 const slotRoutes    = require('./routes/slotroutes');
 const userRoutes = require('./routes/userroutes');
 
-// app.use('/auth',     authRoutes);
+app.use('/auth',     authRoutes);
 app.use('/bookings', bookingRoutes);
 app.use('/',         slotRoutes);   
 app.use('/users',    userRoutes);
