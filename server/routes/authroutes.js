@@ -3,6 +3,9 @@
 // TODO: Implement bearer token and middleware
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '../.env' }); 
+const DUMMY_SECRET_TOKEN = process.env.DUMMY_SECRET_TOKEN;
 
 /**
  * @swagger
@@ -27,7 +30,10 @@ const router = express.Router();
  *         description: Invalid credentials
  */
 router.post('/login', (req, res) => {
-   res.status(501).send('dummy login');
+   
+   const user = {userId: 12345}
+   const accessToken = jwt.sign(user, DUMMY_SECRET_TOKEN)
+   res.json({accessToken: accessToken})
 });
 
 module.exports = router;
