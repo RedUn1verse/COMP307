@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 /**
  * @swagger
- * /book:
+ * /bookings/book:
  *   post:
  *     summary: User books an available slot
  *     tags: [Bookings]
@@ -34,7 +34,7 @@ router.post('/book', (req, res) => { res.status(501).send("books a slot"); });
  
 /**
  * @swagger
- * /me:
+ * /bookings/me:
  *   get:
  *     summary: User retrieves all their bookings
  *     tags: [Bookings]
@@ -54,7 +54,7 @@ router.get('/me', (req, res) => { res.status(501).send("get all the bookings of 
  
 /**
  * @swagger
- * /{bookingId}:
+ * bookings/{bookingId}:
  *   delete:
  *     summary: User cancels one of their bookings
  *     tags: [Bookings]

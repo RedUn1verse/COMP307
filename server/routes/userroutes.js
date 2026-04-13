@@ -4,7 +4,7 @@ const { authenticate } = require('./auth');
 const router = express.Router();
 /**
  * @swagger
- * /active:
+ * /users/active:
  *   get:
  *     summary: Get all registered users who have at least one active booking
  *     tags: [Users]
@@ -33,7 +33,7 @@ router.get('/active', (req, res) => {
 
 /**
  * @swagger
- * /me:
+ * /users/me:
  *   get:
  *     summary: Get the authenticated user's profile
  *     tags: [Users]
