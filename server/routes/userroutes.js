@@ -59,5 +59,37 @@ router.get('/active', authenticate, UserController.getActiveOwners);
  */
 router.get('/me',authenticate, UserController.getMe);
 
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: Register a new user or owner
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email, password, role]
+ *             properties:
+ *               name:     { type: string, example: Alice Smith }
+ *               email:    { type: string, example: alice@example.com }
+ *               password: { type: string, example: secret123 }
+ *               role:     { type: string, enum: [user, owner] }
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Validation errors
+ *       409:
+ *         description: Email already registered
+ */
+router.post('/',  (req, res) => { res.status(501).send("create a user")});
+
 
 module.exports = router;
