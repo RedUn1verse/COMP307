@@ -23,6 +23,19 @@ const SlotModel = {
   getByOwner(ownerId) {
     return db.slots.filter(s => s.ownerId === ownerId);
   },
+ 
+// ================== TO IMPLEMENT =============================
+   create() {
+    return 
+  },
+ 
+  update(slotId) {
+    return
+  },
+ 
+  delete(slotId) {
+    return
+  },
 };
  
 module.exports = SlotModel;
