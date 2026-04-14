@@ -1,41 +1,50 @@
 const { v4: uuidv4 } = require('uuid');
-// TODO: Replace db with Real db and appropriate function impl
-const db = require('./dummy_db');
- 
+const { getDB } = require('../db');
+
 const SlotModel = {
 
-  findById(slotId) {
-    return db.slots.find(s => s.slot_id === Number(slotId)) ?? null;
+  async findById(slotId) {
+    const db = getDB();
+    return await db.collection('slots')
+      .findOne({ slot_id: Number(slotId) }) ?? null;
   },
- 
-  findByPublicId(public_id) {
-    return db.slots.find(s => s.public_id === public_id) ?? null;
+
+  async findByPublicId(public_id) {
+    const db = getDB();
+    return await db.collection('slots')
+      .findOne({ public_id }) ?? null;
   },
- 
-  getActiveByOwner(ownerId) {
-    return db.slots.filter(s =>
-      s.ownerId    === ownerId  &&
-      !s.is_private             &&
-      s.curr_user  < s.user_limit
-    );
+
+  async getActiveByOwner(ownerId) {
+    const db = getDB();
+    return await db.collection('slots')
+      .find({
+        ownerId: ownerId,
+        is_private: false,
+        $expr: { $lt: ["$curr_user", "$user_limit"] }
+      })
+      .toArray();
   },
- 
-  getByOwner(ownerId) {
-    return db.slots.filter(s => s.ownerId === ownerId);
+
+  async getByOwner(ownerId) {
+    const db = getDB();
+    return await db.collection('slots')
+      .find({ ownerId: ownerId })
+      .toArray();
   },
- 
+
 // ================== TO IMPLEMENT =============================
    create() {
-    return 
+    return
   },
- 
+
   update(slotId) {
     return
   },
- 
+
   delete(slotId) {
     return
   },
 };
- 
+
 module.exports = SlotModel;

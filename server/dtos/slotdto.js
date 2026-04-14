@@ -2,7 +2,7 @@ class SlotResponseDto {
   constructor(slot) {
     this.public_id   = slot.public_id;
     this.date        = slot.date;
-    this.star_time   = slot.start_time;
+    this.start_time   = slot.start_time;
     this.end_time     = slot.end_time;
   }
  

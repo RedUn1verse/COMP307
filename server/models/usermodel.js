@@ -1,35 +1,48 @@
-// TODO: Replace db with Real db and appropriate function impl
-const db = require('./dummy_db');
+const { getDB } = require('../db');
 
 const UserModel = {
- 
-  findById(userId) {
-    return db.users.find(user => user.userId === userId);
+
+  async findById(userId) {
+    const db = getDB();
+    return await db.collection('users').findOne({ userId });
   },
 
-  getActiveOwners(){
-    const activeOwnerRecords = db.owners.filter(owner => owner.has_active_slot === true);
-    const combinedActiveOwners = activeOwnerRecords.map(owner => {
-    
-        const userDetails = db.users.find(user => user.userId === owner.userId);
-          return {
+  async getActiveOwners(){
+    const db = getDB();
+
+    const activeOwnerRecords = await db.collection('owners')
+      .find({ has_active_slot: true })
+      .toArray();
+
+    const combinedActiveOwners = [];
+
+    for (const owner of activeOwnerRecords) {
+      const userDetails = await db.collection('users')
+        .findOne({ userId: owner.userId });
+
+      if (userDetails) {
+        combinedActiveOwners.push({
           ...userDetails,
-          public_id: owner.public_id 
-          };
-    });
+          public_id: owner.public_id
+        });
+      }
+    }
+
     return combinedActiveOwners;
-
   },
-  
-  findOwnerByPublicId(public_id) {
-    const ownerRecord = db.owners.find(o => o.public_id === public_id);
+
+  async findOwnerByPublicId(public_id) {
+    const db = getDB();
+
+    const ownerRecord = await db.collection('owners')
+      .findOne({ public_id });
+
     if (!ownerRecord) return null;
-    return db.users.find(u => u.userId === ownerRecord.userId && u.role === 'owner') ?? null;
+
+    return await db.collection('users')
+      .findOne({ userId: ownerRecord.userId, role: 'owner' }) ?? null;
   },
 
- 
 };
 
- 
 module.exports = UserModel;
- 
