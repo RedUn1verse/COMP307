@@ -1,0 +1,35 @@
+@baseUrl = http://winter2026-comp307-group09.cs.mcgill.ca:5000
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1MSIsImlhdCI6MTc3NjA1NjM2OH0.PoCOQa2zotR8kj91xwbPTTU-6ylkzIrT8RYjQ_Q_Jjs
+@ownerId = d290f1ee-6c54-4b01-90e6-d701748f0851
+
+###
+GET {{baseUrl}}/api/test
+
+###
+POST {{baseUrl}}/api/users HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "password": "supersecretpassword"
+}
+
+###
+
+POST {{baseUrl}}/auth/login
+
+###
+
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+GET {{baseUrl}}/users/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+GET {{baseUrl}}/{{ownerId}}/slots
+Authorization: Bearer {{accessToken}}

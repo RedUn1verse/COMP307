@@ -2,6 +2,7 @@ const express = require('express');
 const SlotController   = require('../controllers/slotcontroller');
 const { authenticate } = require('./auth');
 const router = express.Router();
+
 /**
  * @swagger
  * /{owner_id}/slots:
