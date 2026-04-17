@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Browse Professors - MartletSync</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo-placeholder">M</div>
+            <div class="sidebar-app-name">McGill Office Hours</div>
+            <div class="sidebar-sub-label">Student Portal</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-menu-label">Main Menu</div>
+            <a href="#" class="sidebar-link active">Browse Professors</a>
+            <a href="#" class="sidebar-link">My Appointments</a>
+
+            <div class="sidebar-menu-label" style="margin-top: 20px;">Quick Links</div>
+            <a href="#" class="sidebar-link">My Courses</a>
+            <a href="#" class="sidebar-link">Help & Support</a>
+            <a href="#" class="sidebar-link">Settings</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-photo-placeholder">JD</div>
+            <div class="user-details">
+                <div>John Doe</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">john.doe@mail.mcgill.ca</div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="content-header">
+            <h1 class="page-title">Browse Professors</h1>
+            <p class="page-description">Find and book office hours with your professors</p>
+        </header>
+
+        <section class="search-filter-bar">
+            <div class="search-input-container">
+                <span class="search-icon-placeholder">S</span> 
+                <input type="text" class="search-input" placeholder="Search by name, department, or expertise...">
+            </div>
+            <div class="filter-container">
+                <span class="filter-icon-placeholder">V</span> 
+                All Departments
+            </div>
+        </section>
+
+        <section class="card-grid">
+            <div class="prof-card">
+                <h2 class="prof-name">Dr. Guilia Alberini</h2>
+                <p class="prof-department">Computer Science</p>
+                <div class="prof-detail">
+                    <span class="prof-icon-placeholder"></span> Engineering Building, Room 301
+                </div>
+                <div class="prof-detail">
+                    <span class="prof-icon-placeholder"></span> guilia.alberini@university.edu
+                </div>
+                <div class="prof-detail" style="margin-top: 10px; font-weight: 500;">
+                    <span class="prof-icon-placeholder"></span> Office Hours
+                </div>
+                <div style="font-size: 0.8rem; margin-left: 26px;">
+                    <div>Monday: 10:00 - 12:00</div>
+                    <div>Wednesday: 14:00 - 16:00</div>
+                    <a href="#" style="color: var(--mcgill-red); text-decoration: none;">+1 more</a>
+                </div>
+                <button class="card-action-button">View & Book</button>
+            </div>
+
+            <div class="prof-card">
+                <h2 class="prof-name">Dr. Jackie Chen</h2>
+                <p class="prof-department">Computer Science</p>
+                <div class="prof-detail">
+                    <span class="prof-icon-placeholder"></span> Math Building, Room 205
+                </div>
+                <div class="prof-detail">
+                    <span class="prof-icon-placeholder"></span> jackie.chen@university.edu
+                </div>
+                <div class="prof-detail" style="margin-top: 10px; font-weight: 500;">
+                    <span class="prof-icon-placeholder"></span> Office Hours
+                </div>
+                <div style="font-size: 0.8rem; margin-left: 26px;">
+                    <div>Tuesday: 13:00 - 15:00</div>
+                    <div>Thursday: 13:00 - 15:00</div>
+                </div>
+                <button class="card-action-button">View & Book</button>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

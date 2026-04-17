@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - TBD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: var(--light-grey); justify-content: center; align-items: center;">
+    <main class="centered-card-content">
+        <div class="form-card">
+            <div class="sidebar-logo-placeholder" style="margin: 0 auto 15px auto;">M</div> <h1 class="page-title" style="margin-bottom: 5px;">NameTBD</h1>
+            <p class="page-description" style="margin-bottom: 25px;">SOCS Booking Application</p>
+            
+            <p style="font-size: 0.9rem; color: var(--medium-grey); margin-bottom: 25px; text-align: left;">
+                Welcome! Only registered users with a valid McGill email can access this system.
+            </p>
+
+            <form>
+                <div style="text-align: left; margin-bottom: 15px;">
+                    <label for="email" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">McGill Email</label>
+                    <input type="email" id="email" class="search-input" style="padding-left: 15px; background-color: white;" placeholder="name@mail.mcgill.ca or name@mcgill.ca" pattern=".+@.*mcgill\.ca" required>
+                </div>
+                
+                <div style="text-align: left; margin-bottom: 25px;">
+                    <label for="password" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">Password</label>
+                    <input type="password" id="password" class="search-input" style="padding-left: 15px; background-color: white;" required>
+                </div>
+                
+                <button type="submit" class="card-action-button" style="margin-bottom: 15px;">Log In</button>
+            </form>
+
+            <div style="font-size: 0.8rem; color: var(--medium-grey);">
+                Forgot Password? | <a href="#" style="color: var(--mcgill-red); text-decoration: none;">Register as New User</a>
+            </div>
+            
+            <div style="margin-top: 30px; border-top: 1px solid #eaeaea; padding-top: 20px; text-align: left;">
+                <h3 style="font-size: 0.9rem; font-weight: 500;">First time? Basic Instructions</h3>
+                <ul style="font-size: 0.8rem; color: var(--dark-grey); line-height: 1.4;">
+                    <li>You must have an <strong>@mcgill.ca</strong> or <strong>@mail.mcgill.ca</strong> email.</li>
+                    <li>Owners (@mcgill.ca) can create and manage slots.</li>
+                    <li>Users (@mail.mcgill.ca or @mcgill.ca) can book active slots.</li>
+                    <li>Only registered users can view and reserve bookings.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

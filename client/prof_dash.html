@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor Portal - Dashboard - TBD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo-placeholder">M</div> <div class="sidebar-app-name">NameTBD</div>
+            <div class="sidebar-sub-label">Professor Portal</div>
+        </div>
+
+        <div class="sidebar-menu">
+            <div class="sidebar-menu-label">Owner Tools</div>
+            <a href="#" class="sidebar-link active">My Dashboard</a>
+            <a href="#" class="sidebar-link">Manage My Slots</a>
+            <a href="#" class="sidebar-link">New Meeting Requests (3)</a>
+            <a href="#" class="sidebar-link">Heatmap View</a>
+
+            <div class="sidebar-menu-label" style="margin-top: 20px;">Quick Links</div>
+            <a href="#" class="sidebar-link">My Profile</a>
+            <a href="#" class="sidebar-link">Settings</a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-photo-placeholder">GA</div>
+            <div class="user-details">
+                <div>Dr. Guilia Alberini</div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">guilia.alberini@mcgill.ca</div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="content-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="page-title">Welcome, Dr. Alberini</h1>
+                <p class="page-description">Manage your bookings, slots, and pending meeting requests.</p>
+            </div>
+            <button class="card-action-button" style="width: auto;">+ New Private Slot</button>
+        </header>
+
+        <section class="search-filter-bar">
+            <div class="search-input-container">
+                <span class="search-icon-placeholder">&#x1F50D;</span>
+                <input type="text" class="search-input" placeholder="Search my slots or requests...">
+            </div>
+            <div class="filter-container">
+                Copy Invitation URL &#x1F517; </div>
+        </section>
+
+        <section class="card-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px;">
+            
+            <div class="prof-card" style="box-shadow: none;">
+                <h2 class="prof-name" style="color: var(--mcgill-red);">Pending Meeting Requests (3)</h2>
+                <p class="prof-department" style="margin-bottom: 20px;">Type 1: Students requesting custom meetings</p>
+                
+                <div style="border-top: 1px solid #eaeaea; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eaeaea;">
+                        <div>
+                            <div><strong>Jane Student</strong> (j.student@mail.mcgill.ca)</div>
+                            <div style="color: var(--medium-grey); font-size: 0.8rem;">Reason: Final Project Question</div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="card-action-button" style="width: auto; padding: 5px 10px; font-size: 0.8rem;">Accept</button>
+                            <button class="card-action-button" style="width: auto; padding: 5px 10px; font-size: 0.8rem; background-color: #555;">Decline</button>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+
+            <div class="prof-card" style="box-shadow: none;">
+                <h2 class="prof-name">Manage My Slots (This Week)</h2>
+                <p class="prof-department" style="margin-bottom: 20px;">Current slots, statuses, and bookings</p>
+                
+                <div style="border-top: 1px solid #eaeaea; font-size: 0.9rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eaeaea;">
+                        <div>
+                            <div><strong>Monday, 10:00 - 10:30</strong></div>
+                            <div style="font-size: 0.8rem;">Status: <span style="color: var(--mcgill-red); font-weight: 500;">Private</span> (Visible only to you)</div>
+                        </div>
+                        <button class="card-action-button" style="width: auto; padding: 5px 10px; font-size: 0.8rem;">Activate (Public)</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eaeaea;">
+                        <div>
+                            <div><strong>Monday, 10:30 - 11:00</strong></div>
+                            <div style="font-size: 0.8rem;">Status: <span style="color: green; font-weight: 500;">Active</span> (Visible to all students)</div>
+                            <div style="color: var(--medium-grey); font-size: 0.8rem;">Booked by: Jane Student</div>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="card-action-button" style="width: auto; padding: 5px 10px; font-size: 0.8rem;">Delete</button>
+                            <button class="card-action-button" style="width: auto; padding: 5px 10px; font-size: 0.8rem; background-color: #555;">Message</button>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+
+        </section>
+    </main>
+</body>
+</html>

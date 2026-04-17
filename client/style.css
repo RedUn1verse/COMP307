@@ -1,0 +1,267 @@
+/* style.css - Common styles for all SOCS Booking Application pages */
+:root {
+    --mcgill-red: #D20A11; /* Matching the sidebar color */
+    --light-grey: #f7f7f7;
+    --dark-grey: #333;
+    --medium-grey: #999;
+    --text-color: #444;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-stack);
+    background-color: white;
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: var(--mcgill-red);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-header {
+    padding: 0 20px;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    color: var(--mcgill-red);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.sidebar-app-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.sidebar-sub-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-menu {
+    flex-grow: 1;
+}
+
+.sidebar-menu-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.sidebar-link {
+    display: block;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+}
+
+.user-photo-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    margin-right: 15px;
+}
+
+.user-details {
+    font-size: 0.85rem;
+}
+
+/* Main Content Styles */
+.main-content {
+    flex-grow: 1;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    background-color: #fafafa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.page-description {
+    color: var(--medium-grey);
+    font-size: 0.9rem;
+    margin-top: 0;
+}
+
+/* Search and Filter Bar */
+.search-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.search-input-container {
+    flex-grow: 1;
+    max-width: 600px;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px;
+    padding-left: 40px;
+    border: 1px solid #eaeaea;
+    border-radius: var(--border-radius);
+    background-color: #fcfcfc;
+}
+
+.search-icon-placeholder {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--medium-grey);
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    color: var(--dark-grey);
+    font-size: 0.9rem;
+}
+
+.filter-icon-placeholder {
+    margin-right: 5px;
+}
+
+.filter-select {
+    border: none;
+    background: transparent;
+    font-weight: 500;
+}
+
+/* Card Grid Styles */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.prof-card {
+    background-color: white;
+    border: 1px solid #eaeaea;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.prof-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.prof-department {
+    font-size: 0.85rem;
+    color: var(--medium-grey);
+    margin-bottom: 15px;
+}
+
+.prof-detail {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: var(--dark-grey);
+    display: flex;
+    align-items: center;
+}
+
+.prof-icon-placeholder {
+    width: 16px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.card-action-button {
+    background-color: var(--mcgill-red);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 10px 15px;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 500;
+    margin-top: auto;
+}
+
+/* Specific for Sign-In and Prof View Content Layouts */
+.centered-card-content {
+    background-color: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 100px); /* Adjust based on header/footer */
+    width: 100%;
+}
+
+.form-card {
+    background-color: white;
+    border: 1px solid #eaeaea;
+    border-radius: var(--border-radius);
+    padding: 40px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.dashboard-list-content {
+    padding: 20px;
+    flex-grow: 1;
+}
