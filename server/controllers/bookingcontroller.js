@@ -2,7 +2,7 @@ const BookingModel = require('../models/bookingmodel');
 const BookingDto   = require('../dtos/bookingdto');
 const UserDto      = require('../dtos/userdto');
 
-BookingController = {
+const BookingController = {
 
   	async getMyBookings(req, res) {
     		const userId = UserDto.validateUserId(req.user.userId);
