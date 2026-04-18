@@ -9,8 +9,8 @@ class ProposalDto {
       options: p.options.map(o => ({
         optionId:   o.optionId,
         date:       o.date,
-        startTime: o.start_time,
-        endTime:   o.end_time,
+        startTime: o.startTime,
+        endTime:   o.endTime,
         myVote:    o.votes.includes(userId),
       })),
     };
