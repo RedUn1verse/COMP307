@@ -52,7 +52,7 @@ const db = {
     {
       slotId:    1,
       publicId:  'a1b2c3d4-0001-4000-8000-000000000001',
-      owner_id:    'o1',
+      ownerId:    'o1',
       date:       '2026-04-20',
       startTime: '09:00',
       endTime:   '10:00',
@@ -64,7 +64,7 @@ const db = {
     {
       slotId:    2,
       publicId:  'a1b2c3d4-0002-4000-8000-000000000002',
-      owner_id:    'o1',
+      ownerId:    'o1',
       date:       '2026-04-21',
       startTime: '14:00',
       endTime:   '15:30',
@@ -76,7 +76,7 @@ const db = {
     {
       slotId:    3,
       publicId:  'a1b2c3d4-0003-4000-8000-000000000003',
-      owner_id:    'o1',
+      ownerId:    'o1',
       date:       '2026-04-22',
       startTime: '11:00',
       endTime:   '12:00',
@@ -90,7 +90,7 @@ const db = {
     {
       slotId:    4,
       publicId:  'a1b2c3d4-0004-4000-8000-000000000004',
-      owner_id:    'o2',
+      ownerId:    'o2',
       date:       '2026-04-20',
       startTime: '10:00',
       endTime:   '11:00',
@@ -102,7 +102,7 @@ const db = {
     {
       slotId:    5,
       publicId:  'a1b2c3d4-0005-4000-8000-000000000005',
-      owner_id:    'o2',
+      ownerId:    'o2',
       date:       '2026-04-23',
       startTime: '16:00',
       endTime:   '17:00',
@@ -116,7 +116,7 @@ const db = {
     {
       slotId:    6,
       publicId:  'a1b2c3d4-0006-4000-8000-000000000006',
-      owner_id:    'o3',
+      ownerId:    'o3',
       date:       '2026-04-24',
       startTime: '08:00',
       endTime:   '09:00',
@@ -128,7 +128,7 @@ const db = {
     {
       slotId:    7,
       publicId:  'a1b2c3d4-0007-4000-8000-000000000007',
-      owner_id:    'o3',
+      ownerId:    'o3',
       date:       '2026-04-25',
       startTime: '13:00',
       endTime:   '14:00',
@@ -152,9 +152,10 @@ const db = {
 
   proposals: [
     {
-      proposal_id: 'p1',
-      owner_id:    'o1',
+      proposalId: 'p1',
+      ownerId:    'o1',
       userIds:    ['u1', 'u2'],
+      title: "Midterm Review",
       options: [
         {
           optionId:   'p1-opt-a',
@@ -178,13 +179,12 @@ const db = {
           votes:      [],
         },
       ],
-      selected_option_id: null,
-      status:           'open',
     },
 
     {
-      proposal_id: 'p2',
-      owner_id:    'o2',
+      proposalId: 'p2',
+      ownerId:    'o2',
+      title: "Exam time",
       userIds:    ['u1'],
       options: [
         {
@@ -199,12 +199,9 @@ const db = {
           date:       '2026-05-11',
           startTime: '13:00',
           endTime:   '14:00',
-          votes:      ['u1'],
+          votes:      [],
         },
       ],
-      selected_option_id: null,
-      slotId:           null,
-      status:           'open',
     },
   ],
 
