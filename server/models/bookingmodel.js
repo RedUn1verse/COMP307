@@ -43,7 +43,7 @@ async create({userId, slotId}) {
 	);
 
 	return newBooking;
-}
+},
 
 async delete({bookingId, userId}) {
 	const db = getDB();
