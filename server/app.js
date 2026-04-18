@@ -15,11 +15,13 @@ const authRoutes    = require('./routes/authroutes');
 const bookingRoutes = require('./routes/bookingroutes');
 const slotRoutes    = require('./routes/slotroutes');
 const userRoutes = require('./routes/userroutes');
+const proposalRoutes = require('./routes/proposalroutes');
 
 app.use('/auth',     authRoutes);
 app.use('/bookings', bookingRoutes);
 app.use('/',         slotRoutes);   
 app.use('/users',    userRoutes);
+app.use('/proposals', proposalRoutes);
 
 // ================== Swagger Config =======================
 const swaggerOptions = {
