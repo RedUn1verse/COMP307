@@ -77,9 +77,10 @@ const ProposalModel = {
     });
 
     // TODO: Replace with real BookingModel
+    // We make the booking confirmed
     ownerBooking = DummyBookingModel.create(proposal.ownerId, slot.slot_id, true);
     proposal.userIds.forEach(uid => {
-      DummyBookingModel.create(uid, slot.slot_id, false);
+      DummyBookingModel.create(uid, slot.slot_id, true);
     });
 
     ProposalModel.delete(proposalId);
@@ -109,13 +110,12 @@ const ProposalModel = {
 
 const DummyBookingModel = {
 
-  create(userId, slotId, isConfirmed){
+  create(userId, slotId){
     bookingId = genId();
     db.bookings.push({
       bookingId: bookingId,
       userId: userId,
       slotId: slotId,
-      isConfirmed: isConfirmed
     })
     return db.bookings.find(b=> b.bookingId === bookingId);
   },
@@ -124,11 +124,8 @@ const DummyBookingModel = {
 const DummyUserModel = {
 
   addBooking(userId, bookingId){
-    isConfirmed = db.bookings.find(b => b.bookingId === bookingId).isConfirmed
-
     const user = db.users.find(u => u.userId === targetUserId);
-    if (isConfirmed) user.bookingIds.push(booking.id);
-    else user.requestBookingIds.push(booking.id);
+    user.bookingIds.push(booking.id);
 
   }
 

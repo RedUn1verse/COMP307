@@ -1,12 +1,12 @@
 const db = {
   users: [
-    { userId: 'u1', name: 'Alice Smith', email: 'alice@example.com', pwd: 'password123', job: "student",role: 'user', bookingIds: ['b1', 'b3'], requestBookingIds: ['b5'] },
-    { userId: 'u2', name: 'Bob Jones',   email: 'bob@example.com',   pwd: 'password123', job: "student",role: 'user', bookingIds: ['b2', 'b4', 'b6'], requestBookingIds: [] },
-    { userId: 'o1', name: 'Carol Owner', email: 'carol@example.com', pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestBookingIds: [] },
-    { userId: 'o2', name: 'Dave Owner',  email: 'dave@example.com',  pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestBookingIds: [] },
-    { userId: 'o3', name: 'Eve Owner',   email: 'eve@example.com',   pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestBookingIds: [] },
-    { userId: 'o4', name: 'Frank Owner', email: 'frank@example.com', pwd: 'password123', job: "teacher",role: 'owner', bookingIds: ['b7'], requestBookingIds: [] },
-    { userId: 'u3', name: 'Grace Brunch', email: 'grace@example.com', pwd: 'password123', job: "student",role: 'user', bookingIds: [], requestBookingIds: [] },
+    { userId: 'u1', name: 'Alice Smith', email: 'alice@example.com', pwd: 'password123', job: "student",role: 'user', bookingIds: ['b1', 'b3'], requestMeetingIds: ['b5'] },
+    { userId: 'u2', name: 'Bob Jones',   email: 'bob@example.com',   pwd: 'password123', job: "student",role: 'user', bookingIds: ['b2', 'b4', 'b6'], requestMeetingIds: [] },
+    { userId: 'o1', name: 'Carol Owner', email: 'carol@example.com', pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestMeetingIds: [] },
+    { userId: 'o2', name: 'Dave Owner',  email: 'dave@example.com',  pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestMeetingIds: [] },
+    { userId: 'o3', name: 'Eve Owner',   email: 'eve@example.com',   pwd: 'password123', job: "teacher",role: 'owner', bookingIds: [], requestMeetingIds: [] },
+    { userId: 'o4', name: 'Frank Owner', email: 'frank@example.com', pwd: 'password123', job: "teacher",role: 'owner', bookingIds: ['b7'], requestMeetingIds: [] },
+    { userId: 'u3', name: 'Grace Brunch', email: 'grace@example.com', pwd: 'password123', job: "student",role: 'user', bookingIds: [], requestMeetingIds: [] },
   ],
 
   owners: [
@@ -135,13 +135,13 @@ const db = {
   ],
  
   bookings: [
-    { bookingId: 'b1', userId: 'u1', slotId: 1, isConfirmed: true },
-    { bookingId: 'b2', userId: 'u2', slotId: 1, isConfirmed: true },
-    { bookingId: 'b3', userId: 'u1', slotId: 4, isConfirmed: true },
-    { bookingId: 'b4', userId: 'u2', slotId: 5, isConfirmed: false },
-    { bookingId: 'b5', userId: 'u1', slotId: 6, isConfirmed: true },
-    { bookingId: 'b6', userId: 'u2', slotId: 6, isConfirmed: true },
-    { bookingId: 'b7', userId: 'o4', slotId: 6, isConfirmed: true }
+    { bookingId: 'b1', userId: 'u1', slotId: 1, },
+    { bookingId: 'b2', userId: 'u2', slotId: 1, },
+    { bookingId: 'b3', userId: 'u1', slotId: 4, },
+    { bookingId: 'b4', userId: 'u2', slotId: 5, },
+    { bookingId: 'b5', userId: 'u1', slotId: 6, },
+    { bookingId: 'b6', userId: 'u2', slotId: 6, },
+    { bookingId: 'b7', userId: 'o4', slotId: 6, }
   ],
 
 
