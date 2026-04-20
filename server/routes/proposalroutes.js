@@ -46,7 +46,8 @@ router.get('/owned', authenticate, ProposalController.getOwnerProposals);
 
 
 
- /** @swagger
+ /** 
+* @swagger
  * /proposals/create:
  *   post:
  *     summary: Owner creates a proposal with slot options for a specific list of users
@@ -79,6 +80,45 @@ router.get('/owned', authenticate, ProposalController.getOwnerProposals);
  *             schema: { $ref: '#/components/schemas/Error' }
  */
 router.post('/create', authenticate, ProposalController.create);
+
+
+/**
+ * @swagger
+ * /proposals/{proposalId}/select:
+ *   post:
+ *     summary: Owner selects the option they want to book
+ *     description: Closes the proposal, creates a new booking from the chosen option, creates a confirmed booking for the owner, and creates an unconfirmed booking for every invited user.
+ *     tags: [Proposals]
+ *     parameters:
+ *       - in: path
+ *         name: proposalId
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ProposalSelectRequest' }
+ *     responses:
+ *       200:
+ *         description: Proposal closed and bookings created for owner and invited users.
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Booking' }
+ *       403:
+ *         description: Forbidden – only the proposal's owner may select
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Proposal not found
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
+router.post('/:proposalId/select', authenticate, ProposalController.select);
+
+
 
 
 // --------------- Testing Purpose ---------- TO REMOVE
@@ -165,6 +205,18 @@ router.post('/login', (req, res) => {
  *               date:       { type: string, example: "2026-05-04" }
  *               startTime: { type: string, example: "09:00" }
  *               endTime:   { type: string, example: "10:00" }
+ * 
+ *     ProposalSelectRequest:
+ *       type: object
+ *       required: [optionId]
+ *       properties:
+ *         optionId:
+ *           type: string
+ *           example: "p1-opt-a"
+ *     Error:
+ *        type: object
+ *        properties:
+ *          error: { type: string }
  */
 
 

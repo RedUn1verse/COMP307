@@ -1,6 +1,7 @@
 const db = require('../models/dummy_db');
 const ProposalModel = require('../models/proposalmodel');
 const ProposalDto   = require('../dtos/proposaldto');
+const BookingDto   = require('../dtos/bookingdto');
 
 // TODO: Move to user Model + Convert to MongoDB
 const findUser = (userId) => db.users.find(u => u.userId === userId) ?? null;
@@ -54,7 +55,24 @@ const ProposalController = {
         }
         const proposal = ProposalModel.create(ownerId, title.trim(), userIds, options);
         res.status(201).json(ProposalDto.responseForOwner(proposal));
-  },
+    },
+
+    select(req, res) {
+        const { optionId } = req.body ?? {};
+        if (!optionId) return res.status(400).json({ error: 'optionId required' });
+
+        const p = ProposalModel.findById(req.params.proposalId);
+        if (!p) return res.status(404).json({ error: 'Proposal not found' });
+        if (p.ownerId !== req.user.userId) return res.status(403).json({ error: 'Only the owner can select' });
+
+        const option = p.options.find(opt => opt.optionId === optionId);
+        if (!option) return res.status(400).json({ error: 'Invalid optionId' });
+
+        const ownerBooking = ProposalModel.select(p.proposalId, optionId);
+
+        res.json(BookingDto.responseBooking(ownerBooking));
+    },
+
 
 }
 

@@ -46,7 +46,7 @@ const db = {
       privateSlots:    [],
     },
   ],
- 
+  // TODO: bookingsIds should be userIds instead maybe
   slots: [
     // ── Carol (o1) ──────────────────────────────────────────
     {
@@ -59,7 +59,7 @@ const db = {
       userLimit: 5,
       currUser:  2,
       isPrivate: false,
-      bookingIds: ['b1', 'b2'],
+      confirmedUserIds: ['b1', 'b2'],
     },
     {
       slotId:    2,
@@ -71,7 +71,7 @@ const db = {
       userLimit: 3,
       currUser:  0,
       isPrivate: false,
-      bookingIds: [],
+      confirmedUserIds: [],
     },
     {
       slotId:    3,
@@ -83,7 +83,7 @@ const db = {
       userLimit: 1,
       currUser:  0,
       isPrivate: true,
-      bookingIds: [],
+      confirmedUserIds: [],
     },
  
     // ── Dave (o2) ───────────────────────────────────────────
@@ -97,7 +97,7 @@ const db = {
       userLimit: 10,
       currUser:  1,
       isPrivate: false,
-      bookingIds: ['b3'],
+      confirmedUserIds: ['b3'],
     },
     {
       slotId:    5,
@@ -109,7 +109,7 @@ const db = {
       userLimit: 4,
       currUser:  1,
       isPrivate: false,
-      bookingIds: ['b4'],
+      confirmedUserIds: []
     },
  
     // ── Eve (o3) ────────────────────────────────────────────
@@ -123,7 +123,7 @@ const db = {
       userLimit: 6,
       currUser:  3,
       isPrivate: false,
-      bookingIds: ['b5', 'b6', 'b7'],
+      confirmedUserIds: []
     },
     {
       slotId:    7,
@@ -135,18 +135,18 @@ const db = {
       userLimit: 2,
       currUser:  0,
       isPrivate: true,
-      bookingIds: [],
+      confirmedUserIds: [],
     },
   ],
  
   bookings: [
-    { id: 'b1', userId: 'u1', slotId: 1, is_confirmed: true },
-    { id: 'b2', userId: 'u2', slotId: 1, is_confirmed: true },
-    { id: 'b3', userId: 'u1', slotId: 4, is_confirmed: true },
-    { id: 'b4', userId: 'u2', slotId: 5, is_confirmed: false },
-    { id: 'b5', userId: 'u1', slotId: 6, is_confirmed: true },
-    { id: 'b6', userId: 'u2', slotId: 6, is_confirmed: true },
-    { id: 'b7', userId: 'o4', slotId: 6, is_confirmed: true }
+    { bookingId: 'b1', userId: 'u1', slotId: 1, isConfirmed: true },
+    { bookingId: 'b2', userId: 'u2', slotId: 1, isConfirmed: true },
+    { bookingId: 'b3', userId: 'u1', slotId: 4, isConfirmed: true },
+    { bookingId: 'b4', userId: 'u2', slotId: 5, isConfirmed: false },
+    { bookingId: 'b5', userId: 'u1', slotId: 6, isConfirmed: true },
+    { bookingId: 'b6', userId: 'u2', slotId: 6, isConfirmed: true },
+    { bookingId: 'b7', userId: 'o4', slotId: 6, isConfirmed: true }
   ],
 
 
