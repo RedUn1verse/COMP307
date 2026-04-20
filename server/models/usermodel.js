@@ -1,4 +1,6 @@
 const { getDB } = require('../db');
+const db = require('./dummy_db');
+const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 
 const UserModel = {
 
@@ -40,6 +42,42 @@ const UserModel = {
 
     return await db.collection('users')
       .findOne({ userId: ownerRecord.userId, role: 'owner' }) ?? null;
+  },
+
+  async findByEmail(email) {
+    const db = getDB();
+    if (typeof email !== 'string') return null;
+    const needle = email.trim().toLowerCase();
+    return db.collection('users').findOne({email: needle});
+  },
+
+  async createUser({ name, email, password, job, role}) {
+    const db = getDB();
+    const userId = genId();
+    const newUser = {
+      userId,
+      name,
+      email,
+      pwd: password,
+      role,
+      job,
+      bookingsIds: [],
+      requestBookingIds: [],
+    };
+    
+    await db.collection('users').insertOne(newUser);
+
+    if (role === 'owner') {
+      const ownerRecord = {
+        userId,
+        publicId: genId(),
+        activeSlots: [],
+        privateSlots: [],
+      };
+      await db.collection('owners').insertOne(ownerRecord);
+    }
+
+    return newUser;
   },
 
 };

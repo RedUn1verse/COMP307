@@ -70,13 +70,9 @@ router.get('/me',authenticate, UserController.getMe);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required: [name, email, password, role]
- *             properties:
- *               name:     { type: string, example: Alice Smith }
- *               email:    { type: string, example: alice@example.com }
- *               password: { type: string, example: secret123 }
- *               role:     { type: string, enum: [user, owner] }
+ *             $ref: '#/components/schemas/User'
+ *             required: [name, email, password, job]
+ *               
  *     responses:
  *       201:
  *         description: User created successfully
@@ -89,7 +85,7 @@ router.get('/me',authenticate, UserController.getMe);
  *       409:
  *         description: Email already registered
  */
-router.post('/create',  (req, res) => { res.status(501).send("create a user")});
+router.post('/create', UserController.createUser);
 
 
 
@@ -104,6 +100,15 @@ router.post('/create',  (req, res) => { res.status(501).send("create a user")});
  *         name:   { type: string, example: "Alice Smith" }
  *         email:       { type: string, example: "alicesmith@mcgill.ca" }
  *         job:   { type: string, example: "student", description: A job can be a student, a teacher or a TA}
+ *      
+ *     NewUser:
+ *       type: object
+ *       description: Properties needed for the creation of a new user.
+ *       properties:
+ *         name:   { type: string, example: "Alice Smith" }
+ *         email: {type:string, example: "alicesmith@mail.mcgill.ca"}
+ *         password: { type: string, example: secret123 }
+ *         job: {type: string, example: Student, description: A job can be student, teacher, or TA}
  */
 
 module.exports = router;
