@@ -5,9 +5,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /{owner_id}/slots:
+ * slot/{owner_id}:
  *   get:
- *     summary: Get all active unbooked slots for a specific owner
+ *     summary: A user can find all active unbooked slots for a specific owner
  *     tags: [Slots]
  *     parameters:
  *       - in: path
@@ -29,11 +29,11 @@ const router = express.Router();
  *       404:
  *         description: Owner not found
  */
-router.get('/:owner_id/slots', authenticate, SlotController.getAvailableByOwner);
+router.get('/:owner_id', authenticate, SlotController.getAvailableByOwner);
 
 /**
  * @swagger
- * /slots:
+ * slot/create:
  *   post:
  *     summary: Owner creates a new booking slot
  *     tags: [Slots]
@@ -65,16 +65,16 @@ router.get('/:owner_id/slots', authenticate, SlotController.getAvailableByOwner)
  *       403:
  *         description: Forbidden – owner role required
  */
-router.post('/slots', (req, res) => {
+router.post('/create', (req, res) => {
   res.status(501).send('owner create slots');
 });
 
 
 /**
  * @swagger
- * /slots:
+ * slot/owned:
  *   get:
- *     summary: Owner retrieves all their slots (including booked ones)
+ *     summary: Owner retrieves all their slots, private and active
  *     tags: [Slots]
  *     security:
  *       - bearerAuth: []
@@ -90,103 +90,103 @@ router.post('/slots', (req, res) => {
  *       403:
  *         description: Forbidden – owner role required
  */
-router.get('/slots', (req, res) => { res.status(501).send("get all slots booked and unbboked"); });
+router.get('/slots', (req, res) => { res.status(501).send("get all slots private and active"); });
 
 
-/**
- * @swagger
- * /slots/{slotId}:
- *   put:
- *     summary: Owner updates a slot's details
- *     tags: [Slots]
- *     parameters:
- *       - in: path
- *         name: slotId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         routerlication/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               startTime:
- *                 type: string
- *                 format: date-time
- *               endTime:
- *                 type: string
- *                 format: date-time
- *     responses:
- *       200:
- *         description: Slot updated successfully
- *       403:
- *         description: Forbidden – owner role required
- *       404:
- *         description: Slot not found
- */
-router.put('/slots/:slotId', (req, res) => { res.status(501).send("update a slot"); });
+// /**
+//  * @swagger
+//  * /slot/{slotId}:
+//  *   put:
+//  *     summary: Owner updates a slot's details
+//  *     tags: [Slots]
+//  *     parameters:
+//  *       - in: path
+//  *         name: slotId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         routerlication/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               title:
+//  *                 type: string
+//  *               description:
+//  *                 type: string
+//  *               startTime:
+//  *                 type: string
+//  *                 format: date-time
+//  *               endTime:
+//  *                 type: string
+//  *                 format: date-time
+//  *     responses:
+//  *       200:
+//  *         description: Slot updated successfully
+//  *       403:
+//  *         description: Forbidden – owner role required
+//  *       404:
+//  *         description: Slot not found
+//  */
+// router.put('/slots/:slotId', (req, res) => { res.status(501).send("update a slot"); });
 
 
-/**
- * @swagger
- * /slots/{slotId}:
- *   delete:
- *     summary: Owner deletes a booking slot
- *     tags: [Slots]
- *     parameters:
- *       - in: path
- *         name: slotId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Slot deleted successfully
- *       403:
- *         description: Forbidden – owner role required
- *       404:
- *         description: Slot not found
- */
-router.delete('/slots/:slotId', (req, res) => { res.status(501).send("delete a slot"); });
+// /**
+//  * @swagger
+//  * /slot/{slotId}:
+//  *   delete:
+//  *     summary: Owner deletes a booking slot
+//  *     tags: [Slots]
+//  *     parameters:
+//  *       - in: path
+//  *         name: slotId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *     responses:
+//  *       200:
+//  *         description: Slot deleted successfully
+//  *       403:
+//  *         description: Forbidden – owner role required
+//  *       404:
+//  *         description: Slot not found
+//  */
+// router.delete('/slots/:slotId', (req, res) => { res.status(501).send("delete a slot"); });
 
-/**
- * @swagger
- * /slots/{slotId}/email:
- *   post:
- *     summary: Owner sends an email to the user who booked a slot
- *     tags: [Slots]
- *     parameters:
- *       - in: path
- *         name: slotId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         routerlication/json:
- *           schema:
- *             type: object
- *             required: [subject, body]
- *             properties:
- *               subject:
- *                 type: string
- *               body:
- *                 type: string
- *     responses:
- *       200:
- *         description: Email sent successfully
- *       403:
- *         description: Forbidden – owner role required
- *       404:
- *         description: Slot not found or no booking exists for this slot
- */
-router.post('/slots/:slotId/email', (req, res) => { res.status(501).send("owner send email to user"); });
+// /**
+//  * @swagger
+//  * /slots/{slotId}/email:
+//  *   post:
+//  *     summary: Owner sends an email to the user who booked a slot
+//  *     tags: [Slots]
+//  *     parameters:
+//  *       - in: path
+//  *         name: slotId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         routerlication/json:
+//  *           schema:
+//  *             type: object
+//  *             required: [subject, body]
+//  *             properties:
+//  *               subject:
+//  *                 type: string
+//  *               body:
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: Email sent successfully
+//  *       403:
+//  *         description: Forbidden – owner role required
+//  *       404:
+//  *         description: Slot not found or no booking exists for this slot
+//  */
+// router.post('/slots/:slotId/email', (req, res) => { res.status(501).send("owner send email to user"); });
 
 module.exports = router;

@@ -4,7 +4,7 @@ const BookingController = require('../controllers/bookingcontroller');
 const { authenticate }  = require('./auth');
 /**
  * @swagger
- * /bookings/book:
+ * booking/create:
  *   post:
  *     summary: User books an available slot
  *     tags: [Bookings]
@@ -32,11 +32,11 @@ const { authenticate }  = require('./auth');
  *       404:
  *         description: Slot not found
  */
-router.post('/book', (req, res) => { res.status(501).send("books a slot"); });
+router.post('/create', (req, res) => { res.status(501).send("books a slot"); });
  
 /**
  * @swagger
- * /bookings/me:
+ * booking/me:
  *   get:
  *     summary: User retrieves all their bookings (both confirmed and unconfirmed)
  *     tags: [Bookings]
@@ -57,7 +57,7 @@ router.get('/me', authenticate, BookingController.getMyBookings);
  
 /**
  * @swagger
- * bookings/{bookingId}:
+ * booking/{bookingId}:
  *   delete:
  *     summary: User cancels one of their bookings
  *     tags: [Bookings]

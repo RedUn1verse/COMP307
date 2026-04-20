@@ -4,7 +4,7 @@ const { authenticate } = require('./auth');
 const router = express.Router();
 /**
  * @swagger
- * /users/active:
+ * user/active:
  *   get:
  *     summary: Get all registered users who have at least one active unbooked slot
  *     tags: [Users]
@@ -39,7 +39,7 @@ router.get('/active', authenticate, UserController.getActiveOwners);
 
 /**
  * @swagger
- * /users/me:
+ * user/me:
  *   get:
  *     summary: Get the authenticated user's information
  *     tags: [Users]
@@ -61,7 +61,7 @@ router.get('/me',authenticate, UserController.getMe);
 
 /**
  * @swagger
- * /register:
+ * user/create:
  *   post:
  *     summary: Register a new user or owner
  *     tags: [Users]
@@ -89,7 +89,7 @@ router.get('/me',authenticate, UserController.getMe);
  *       409:
  *         description: Email already registered
  */
-router.post('/',  (req, res) => { res.status(501).send("create a user")});
+router.post('/create',  (req, res) => { res.status(501).send("create a user")});
 
 
 module.exports = router;

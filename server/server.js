@@ -6,7 +6,8 @@ const { connectDB, getDB } = require('./db');
 const userRoutes = require('./routes/userroutes');
 const slotRoutes = require('./routes/slotroutes');
 const bookingRoutes = require('./routes/bookingroutes');
-const authRoutes = require('./routes/authroutes')
+const authRoutes = require('./routes/authroutes');
+const proposalRoutes = require('./routes/proposalroutes');
 
 // ================== App Config =======================
 
@@ -20,6 +21,7 @@ app.use('/user', userRoutes);
 app.use('/slot', slotRoutes);
 app.use('/booking', bookingRoutes);
 app.use('/auth', authRoutes);
+app.use('/proposal', proposalRoutes);
 
 
 

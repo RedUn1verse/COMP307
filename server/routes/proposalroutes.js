@@ -11,7 +11,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /proposals/me:
+ * proposal/me:
  *   get:
  *     summary: Authenticated user retrieves proposals they were invited to
  *     description: Response does not show vote count. Each option has myVote so the user can tell which they voted for.
@@ -29,7 +29,7 @@ router.get('/me',authenticate, ProposalController.getUserProposals);
 
 /**
  * @swagger
- * /proposals/owned:
+ * proposal/owned:
  *   get:
  *     summary: Owner retrieves all proposals they created, including vote tallies
  *     tags: [Proposals]
@@ -48,7 +48,7 @@ router.get('/owned', authenticate, ProposalController.getOwnerProposals);
 
  /** 
 * @swagger
- * /proposals/create:
+ * proposal/create:
  *   post:
  *     summary: Owner creates a proposal with slot options for a specific list of users
  *     tags: [Proposals]
@@ -84,7 +84,7 @@ router.post('/create', authenticate, ProposalController.create);
 
 /**
  * @swagger
- * /proposals/{proposalId}/select:
+ * proposal/{proposalId}/select:
  *   post:
  *     summary: Owner selects the option they want to book
  *     description: Closes the proposal, creates a new booking from the chosen option, creates a confirmed booking for the owner, and creates an unconfirmed booking for every invited user.
@@ -121,7 +121,7 @@ router.post('/:proposalId/select', authenticate, ProposalController.select);
 
 /**
  * @swagger
- * /proposals/{proposalId}/vote:
+ * proposal/{proposalId}/vote:
  *   post:
  *     summary: Invited user casts their single vote for one or more options
  *     description: A user may vote only once per proposal. Subsequent vote requests from the same user are rejected with 400. A user may include multiple optionIds in this single call.
@@ -159,8 +159,6 @@ router.post('/login', (req, res) => {
    const accessToken = jwt.sign(user, DUMMY_SECRET_TOKEN)
    res.json({accessToken: accessToken})
 });
-
-
 
 
 /**
