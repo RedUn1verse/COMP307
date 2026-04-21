@@ -1,6 +1,5 @@
-const { v4: uuidv4 } = require('uuid');
 const { getDB } = require('../db');
-
+const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 const SlotModel = {
 
   async findById(slotId) {
@@ -33,11 +32,31 @@ const SlotModel = {
       .toArray();
   },
 
-// ================== TO IMPLEMENT =============================
-   create() {
-    return
-  },
 
+  async create(ownerId, date, startTime, endTime, title, isBooked, isPrivate) {
+    const db = getDB();
+    slotId = genId();
+    const newSlot = {
+      slotId,
+      ownerId,
+      date,
+      startTime,
+      endTime,
+      title,
+      isBooked,
+      isPrivate
+    }
+    await db.collection("slots").insertOne(newSlot);
+
+    const targetArray = isPrivate ? "privateSlots" : "activeSlots";
+    await db.collection("owners").updateOne(
+    { userId: ownerId }, 
+    { $push: { [targetArray]: slotId } }
+    )
+    
+    return newSlot
+  },
+// ================== TO IMPLEMENT =============================
   update(slotId) {
     return
   },

@@ -1,4 +1,6 @@
 const { getDB } = require('../db');
+const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+
 const BookingModel = {
   
 async findByUser(userId) {
@@ -27,19 +29,33 @@ async findByUser(userId) {
 	return [...confirmed, ...unconfirmed].filter(Boolean);
 },
 
-async create({userId, slotId}) {
+async create({userId, ownerId, slotId}) {
 	const db = getDB();
+	const bookingId = genId();
+
 	const newBooking = {
-		bookingId: Date.now(),
+		bookingId,
 		userId,
-		slot_id: slotId,
-		status: 'confirmed'
+		slotId,
 	}
+
 	await db.collection('bookings').insertOne(newBooking);
 
-	await db.collection('users').updateOne(
-		{userId},
-		{ $push: { bookings_ids: newBooking.bookingId } }
+
+//    await db.collection("users").updateMany(
+//     { 
+//     userId: { $in: [meeting.userId, meeting.ownerId] } 
+//     },
+//     { 
+//     $pull: { requestMeetingIds: mId } 
+//     });
+	
+
+	await db.collection('users').updateMany(
+		{
+		userId: {$in: [userId, ownerId]},
+		},
+		{ $push: { bookingsIds: bookingId} }
 	);
 
 	return newBooking;

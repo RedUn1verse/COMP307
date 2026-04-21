@@ -30,7 +30,6 @@ const UserModel = {
 
   async enrichOwnerName(request){
     if (!request) return null;
-    console.log(request)
     owner = await UserModel.findById(request.ownerId);
   
     const ownerName = owner.name;

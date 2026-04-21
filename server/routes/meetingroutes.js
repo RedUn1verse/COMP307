@@ -72,7 +72,7 @@ router.get('/me', authenticate, meetingController.getMe);
  *         schema: { type: string }
  *     responses:
  *       200: 
- *         description: Rejects meeting; Response includes 'url' URL to open mailto:.
+ *         description: Rejects meeting; Response includes 'url' to open mailto:.
  *         content:
  *           application/json:
  *             schema:             
@@ -91,6 +91,44 @@ router.get('/me', authenticate, meetingController.getMe);
  *              
  */
 router.post('/:requestId/decline', authenticate, meetingController.decline);
+
+
+/**
+ * @swagger
+ * meeting/{meetingId}/accept:
+ *   post:
+ *     summary: Owner accepts a meeting request and emails the user about. The meeting request is removed from both the user and owner's information. A booking is added to both the user and owner's information
+ *     tags: [Meeting]
+ *     parameters:
+ *       - in: path
+ *         name: meetingId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: 
+ *         description: Accepts meeting; Response includes 'url' to open mailto:.
+ *         content:
+ *           application/json:
+ *             schema:             
+ *              type: object
+ *              properties:
+ *                  url:
+ *                      type: string
+ *                      format: uri
+ *                      example: "mailto:carol@mcgill.ca?subject=New+meeting+request+from+Alice+Smith&body=..."
+ *       403: 
+ *          description: Only the addressed owner can accept
+ *          content:
+ *              application/json:
+ *              schema: { $ref: '#/components/schemas/Error' }
+ *       404: 
+ *          description: MeetingId not found
+ *          content:
+ *              application/json:
+ *              schema: { $ref: '#/components/schemas/Error' }
+ *              
+ */
+router.post('/:requestId/accept', authenticate, meetingController.accept);
 
 
 /**

@@ -56,6 +56,27 @@ const MeetingModel = {
     await db.collection("meetings").deleteOne({meetingId: mId});
     return meeting;
     
+  },
+
+  async accept(mId){
+
+    meeting = await this.decline(mId); // we remove the meetings because they will be transformed in a booking
+
+    const slot = SlotModel.create({
+      ownerId:    meeting.ownerId,
+      date:       meeting.date,
+      startTime: meeting.startTime,
+      endTime:   meeting.endTime,
+      title: meeting.title,
+      isBooked: true,
+      isPrivate: true,
+    });
+    
+    BookingModel.create(meeting.userId, slot.ownerId,slot.slotId);
+
+
+    return meeting;
+
   }
  
 };

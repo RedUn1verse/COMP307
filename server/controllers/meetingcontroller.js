@@ -2,6 +2,7 @@ const MeetingModel        = require('../models/meetingmodel');
 const UserModel        = require('../models/usermodel');
 const MeetingDto          = require('../dtos/meetingdto');
 const EmailService = require('../services/emailservice.js');
+const SlotModel = require('../models/slotmodel.js');
 
 const MeetingRequestController = {
 
@@ -64,7 +65,7 @@ const MeetingRequestController = {
   async decline(req, res) {
 
     const r = await MeetingModel.findById(req.params.requestId);
-    if (!r) return res.status(204).json("Request Already Declined");
+    if (!r) return res.status(204).json("Meeting Already Declined");
     if (r.ownerId !== req.user.userId) return res.status(403).json({ error: 'Only the addressed owner can decline' });
 
     const declined = await MeetingModel.decline(req.params.requestId);
@@ -73,7 +74,6 @@ const MeetingRequestController = {
     uDeclined = await UserModel.enrichUserName(declined);
     eDeclined = await UserModel.enrichUserEmail(declined);
 
-    console.log(eDeclined);
     const to = eDeclined.userEmail;
     const subject = `Your meeting request with ${oDeclined.ownerName} was declined`;
     const body = `${oDeclined.ownerName} is unable to take the meeting on ` +
@@ -83,6 +83,30 @@ const MeetingRequestController = {
 
     res.status(200).json({ ...MeetingDto.responseForOwner(uDeclined), url});
 
+  },
+
+  async accept(req, res) {
+    const r = await MeetingModel.findById(req.params.requestId);
+    if (!r) return res.status(404).json({ error: 'Meeting not found' });
+    if (r.ownerId !== req.user.userId) return res.status(403).json({ error: 'Only the addressed owner can accept' });
+
+    const accepted = await MeetingModel.accept(req.params.requestId);
+    
+
+    oAccepted = await UserModel.enrichOwnerName(accepted);
+    uAccepted = await UserModel.enrichUserName(accepted);
+    eAccepted = await UserModel.enrichUserEmail(accepted);
+
+    const to = eAccepted.userEmail;
+    const subject = `Your meeting request with ${oAccepted.ownerName} was accepted`;
+    const body = `${oAccepted.ownerName} will see you on ` +
+        `${accepted.date} from ${accepted.startTime} to ${accepted.endTime}.`;
+
+    const url = EmailService.buildMailto(to, subject, body);
+
+    res.status(200).json({ ...MeetingDto.responseForOwner(uAccepted), url});
+
+   
   },
 
 
