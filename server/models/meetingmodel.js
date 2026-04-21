@@ -62,17 +62,17 @@ const MeetingModel = {
 
     meeting = await this.decline(mId); // we remove the meetings because they will be transformed in a booking
 
-    const slot = SlotModel.create({
-      ownerId:    meeting.ownerId,
-      date:       meeting.date,
-      startTime: meeting.startTime,
-      endTime:   meeting.endTime,
-      title: meeting.title,
-      isBooked: true,
-      isPrivate: true,
-    });
+    const slot = await SlotModel.create(
+      meeting.ownerId,
+      meeting.date,
+      meeting.startTime,
+      meeting.endTime,
+      meeting.title,
+      true,
+      true,
+    );
     
-    BookingModel.create(meeting.userId, slot.ownerId,slot.slotId);
+    await BookingModel.create(meeting.userId, slot.ownerId,slot.slotId);
 
 
     return meeting;
