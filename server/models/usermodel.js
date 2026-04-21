@@ -30,7 +30,9 @@ const UserModel = {
 
   async enrichOwnerName(request){
     if (!request) return null;
+    console.log(request)
     owner = await UserModel.findById(request.ownerId);
+  
     const ownerName = owner.name;
     return {
       ...request,
@@ -67,6 +69,13 @@ const UserModel = {
     { userId:  userId}, 
     { $addToSet: { requestMeetingIds: meetingId} }
     )
+  },
+
+  async enrichUserEmail(request){
+    user = await UserModel.findById(request.userId);
+    return {
+      ...request, userEmail: user.email
+    }
   },
   // =================== MAIN FUNCTIONS =======================
   async getActiveOwners(){

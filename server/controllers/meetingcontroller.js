@@ -61,6 +61,30 @@ const MeetingRequestController = {
     };
   },
 
+  async decline(req, res) {
+
+    const r = await MeetingModel.findById(req.params.requestId);
+    if (!r) return res.status(204).json("Request Already Declined");
+    if (r.ownerId !== req.user.userId) return res.status(403).json({ error: 'Only the addressed owner can decline' });
+
+    const declined = await MeetingModel.decline(req.params.requestId);
+
+    oDeclined = await UserModel.enrichOwnerName(declined);
+    uDeclined = await UserModel.enrichUserName(declined);
+    eDeclined = await UserModel.enrichUserEmail(declined);
+
+    console.log(eDeclined);
+    const to = eDeclined.userEmail;
+    const subject = `Your meeting request with ${oDeclined.ownerName} was declined`;
+    const body = `${oDeclined.ownerName} is unable to take the meeting on ` +
+        `${declined.date} from ${declined.startTime} to ${declined.endTime}.`;
+
+    const url = EmailService.buildMailto(to, subject, body);
+
+    res.status(200).json({ ...MeetingDto.responseForOwner(uDeclined), url});
+
+  },
+
 
 
 };

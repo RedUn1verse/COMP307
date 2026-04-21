@@ -61,6 +61,40 @@ router.get('/me', authenticate, meetingController.getMe);
 
 /**
  * @swagger
+ * meeting/{meetingId}/decline:
+ *   post:
+ *     summary: Owner declines a meeting request and emails the user about. The meeting request is removed from both the user and owner's information
+ *     tags: [Meeting]
+ *     parameters:
+ *       - in: path
+ *         name: meetingId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: 
+ *         description: Rejects meeting; Response includes 'url' URL to open mailto:.
+ *         content:
+ *           application/json:
+ *             schema:             
+ *              type: object
+ *              properties:
+ *                  url:
+ *                      type: string
+ *                      format: uri
+ *                      example: "mailto:carol@mcgill.ca?subject=New+meeting+request+from+Alice+Smith&body=..."
+ *       204: { description: Meeting already declined }
+ *       403: 
+ *          description: Only the addressed owner can decline
+ *          content:
+ *              application/json:
+ *              schema: { $ref: '#/components/schemas/Error' }
+ *              
+ */
+router.post('/:requestId/decline', authenticate, meetingController.decline);
+
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     MeetingRequestUserView:
