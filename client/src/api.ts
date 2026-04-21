@@ -74,10 +74,16 @@ export const users = {
 export const bookings = {
   getAll: () => apiCall('/bookings', { method: 'GET' }),
   getById: (id: string) => apiCall(`/bookings/${id}`, { method: 'GET' }),
+  getMyBookings: () => apiCall('/bookings/me', { method: 'GET' }),
   create: (data: any) =>
     apiCall('/bookings', {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+  book: (slotId: string) =>
+    apiCall('/bookings/book', {
+      method: 'POST',
+      body: JSON.stringify({ slotId }),
     }),
   update: (id: string, data: any) =>
     apiCall(`/bookings/${id}`, {

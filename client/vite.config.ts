@@ -13,7 +13,10 @@ export default defineConfig({
       "winter2026-comp307-group09.cs.mcgill.ca"
     ],
     proxy: {
-      '/api': 'http://127.0.0.1:5000'
+      '/auth': 'http://127.0.0.1:3000',
+      '/bookings': 'http://127.0.0.1:3000',
+      '/users': 'http://127.0.0.1:3000',
+      '/api': 'http://127.0.0.1:3000'
     }
   }
 })

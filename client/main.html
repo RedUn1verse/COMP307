@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Portal - Browse Professors - MartletSync</title>
+    <title>Student Portal - Browse Professors - NameTBD</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +21,7 @@
 
             <div class="sidebar-menu-label" style="margin-top: 20px;">Quick Links</div>
             <a href="#" class="sidebar-link">My Courses</a>
-            <a href="#" class="sidebar-link">Help & Support</a>
+            <a href="#" class="sidebar-link">Help &amp; Support</a>
             <a href="#" class="sidebar-link">Settings</a>
         </div>
 
@@ -42,55 +42,71 @@
 
         <section class="search-filter-bar">
             <div class="search-input-container">
-                <span class="search-icon-placeholder">S</span> 
+                <span class="search-icon-placeholder"></span>
                 <input type="text" class="search-input" placeholder="Search by name, department, or expertise...">
             </div>
             <div class="filter-container">
-                <span class="filter-icon-placeholder">V</span> 
+                <span class="filter-icon-placeholder"></span>
                 All Departments
             </div>
         </section>
 
         <section class="card-grid">
+            <!-- Prof Card -->
             <div class="prof-card">
                 <h2 class="prof-name">Dr. Guilia Alberini</h2>
                 <p class="prof-department">Computer Science</p>
-                <div class="prof-detail">
-                    <span class="prof-icon-placeholder"></span> Engineering Building, Room 301
+                <div class="prof-detail">Engineering Building, Room 301</div>
+                <div class="prof-detail">guilia.alberini@mcgill.ca</div>
+                <div class="prof-hours-label">Office Hours</div>
+                <div class="prof-hours-list">
+                    Mon 10:00-12:00|& Wed 14:00-16:00
+                    <br><a href="#">+1 more</a>
                 </div>
-                <div class="prof-detail">
-                    <span class="prof-icon-placeholder"></span> guilia.alberini@university.edu
-                </div>
-                <div class="prof-detail" style="margin-top: 10px; font-weight: 500;">
-                    <span class="prof-icon-placeholder"></span> Office Hours
-                </div>
-                <div style="font-size: 0.8rem; margin-left: 26px;">
-                    <div>Monday: 10:00 - 12:00</div>
-                    <div>Wednesday: 14:00 - 16:00</div>
-                    <a href="#" style="color: var(--mcgill-red); text-decoration: none;">+1 more</a>
-                </div>
-                <button class="card-action-button">View & Book</button>
+                <button class="card-action-button view-and-book-btn" data-professor="Dr. Guilia Alberini">View &amp; Book</button>
             </div>
 
             <div class="prof-card">
                 <h2 class="prof-name">Dr. Jackie Chen</h2>
                 <p class="prof-department">Computer Science</p>
-                <div class="prof-detail">
-                    <span class="prof-icon-placeholder"></span> Math Building, Room 205
+                <div class="prof-detail">Math Building, Room 205</div>
+                <div class="prof-detail">jackie.chen@mcgill.ca</div>
+                <div class="prof-hours-label">Office Hours</div>
+                <div class="prof-hours-list">
+                    Tue 13:00-15:00 | Thu 13:00-15:00
                 </div>
-                <div class="prof-detail">
-                    <span class="prof-icon-placeholder"></span> jackie.chen@university.edu
+                <button class="card-action-button view-and-book-btn" data-professor="Dr. Jackie Chen">View &amp; Book</button>
+            </div>
+
+            <div class="prof-card">
+                <h2 class="prof-name">Dr. Jeremy MacDonald</h2>
+                <p class="prof-department">Mathematics</p>
+                <div class="prof-detail">Burnside Hall, Room 1120</div>
+                <div class="prof-detail">j.macdonald@mcgill.ca</div>
+                <div class="prof-hours-label">Office Hours</div>
+                <div class="prof-hours-list">
+                    Mon 14:00-16:00 |Fri 10:00-12:00
                 </div>
-                <div class="prof-detail" style="margin-top: 10px; font-weight: 500;">
-                    <span class="prof-icon-placeholder"></span> Office Hours
+                <button class="card-action-button view-and-book-btn" data-professor="Dr. Jeremy MacDonald">View &amp; Book</button>
+            </div>
+
+            <div class="prof-card">
+                <h2 class="prof-name">Dr. Djivede Kelome </h2>
+                <p class="prof-department">Mathematics</p>
+                <div class="prof-detail">Rutherford Physics, Room 311</div>
+                <div class="prof-detail">d.kelome@mcgill.ca</div>
+                <div class="prof-hours-label">Office Hours</div>
+                <div class="prof-hours-list">
+                    Wed 10:00-11:30 |Thu 15:00-16:30
                 </div>
-                <div style="font-size: 0.8rem; margin-left: 26px;">
-                    <div>Tuesday: 13:00 - 15:00</div>
-                    <div>Thursday: 13:00 - 15:00</div>
-                </div>
-                <button class="card-action-button">View & Book</button>
+                <button class="card-action-button view-and-book-btn" data-professor="Dr. Djivede Kelome ">View &amp; Book</button>
             </div>
         </section>
     </main>
+
+    <!-- Booking Modal (injected by JS) -->
+    <script src="src/booking_modal.js"></script>
+    <script type="module" src="./src/student_dashboard.ts"></script>
 </body>
+
 </html>
