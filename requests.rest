@@ -1,0 +1,150 @@
+@baseUrl = http://winter2026-comp307-group09.cs.mcgill.ca:5000
+
+// Alice Smith u1's token
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1MSIsImlhdCI6MTc3NjA1NjM2OH0.PoCOQa2zotR8kj91xwbPTTU-6ylkzIrT8RYjQ_Q_Jjs
+@ownerId = d290f1ee-6c54-4b01-90e6-d701748f0851
+
+// Carol Owber
+@ownerAccessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJvMSIsImlhdCI6MTc3NjUzNjM2MH0.uZBKEfrPBAtK6j0qNEom61mhoBqugM8J_DxGptJiVy4
+
+
+
+###
+GET {{baseUrl}}/api/test
+
+###
+
+GET {{baseUrl}}/api/test-email-link
+
+###
+
+POST {{baseUrl}}/auth/login
+
+###
+
+GET {{baseUrl}}/user/me
+Authorization: Bearer {{accessToken}}
+
+###
+GET {{baseUrl}}/user/me
+Authorization: Bearer {{ownerAccessToken}}
+###
+
+GET {{baseUrl}}/user/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+GET {{baseUrl}}/{{ownerId}}/slots
+Authorization: Bearer {{accessToken}}
+
+
+###
+POST {{baseUrl}}/user/create
+Content-Type: application/json
+
+{
+  "name": "Seb User",
+  "email": "seb@mail.mcgill.ca",
+  "password": "123456",
+  "job": "student"
+}
+###
+// ==================== MEETING APIS ===========================
+POST {{baseUrl}}/meeting/create
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ownerEmail": "carol@example.com",
+  "title": "TEST DEMO",
+  "message": "Need to demo app",
+  "date": "2026-06-20",
+  "startTime": "11:00",
+  "endTime": "12:30"
+}
+
+###
+
+GET {{baseUrl}}/meeting/me
+Authorization: Bearer {{accessToken}}
+
+
+###
+GET {{baseUrl}}/meeting/me
+Authorization: Bearer {{ownerAccessToken}}
+
+###
+@meetingId = sdnkzhnbmo81uyde
+POST {{baseUrl}}/meeting/{{meetingId}}/decline
+Authorization: Bearer {{ownerAccessToken}}
+
+###
+@acceptMeetingId = ygkoy02tmo947qmg
+POST {{baseUrl}}/meeting/{{acceptMeetingId}}/accept
+Authorization: Bearer {{ownerAccessToken}}
+
+
+// ====================== PROPOSAL APIS ====================
+
+###
+GET {{baseUrl}}/proposal/me
+Authorization: Bearer {{accessToken}}
+
+###
+POST {{baseUrl}}/proposal/login
+###
+GET {{baseUrl}}/proposal/owned
+Authorization: Bearer {{ownerAccessToken}}
+###
+
+POST {{baseUrl}}/proposal/create
+Authorization: Bearer {{ownerAccessToken}}
+Content-Type: application/json
+
+{
+  "title": "770 Final",
+  "userNames": [
+    "Alice Smith",
+    "Bob Jones",
+    "Grace Brunch"
+  ],
+  "options": [
+    {
+      "date": "2026-05-04",
+      "startTime": "09:00",
+      "endTime": "11:00"
+    },
+    {
+      "date": "2026-05-06",
+      "startTime": "18:00",
+      "endTime": "19:00"
+    },
+    {
+      "date": "2026-05-07",
+      "startTime": "18:00",
+      "endTime": "19:00"
+    }
+  ]
+}
+
+###
+@proposalId = sm8qpiosmo97f959
+POST {{baseUrl}}/proposal/{{proposalId}}/select
+Authorization: Bearer {{ownerAccessToken}}
+Content-Type: application/json
+
+{
+  "optionId": "g6zsmfphmo97f959"
+}
+###
+@voteProposalId = 71esxmnxmo95ecx9
+POST {{baseUrl}}/proposal/{{voteProposalId}}/vote
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "optionIds": ["hgagz9hwmo95ecx9","pqtxo0p7mo95ecx9"]
+}
+
+###
