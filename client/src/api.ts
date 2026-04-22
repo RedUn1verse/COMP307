@@ -72,24 +72,81 @@ export const users = {
 
 // Booking Endpoints
 export const bookings = {
-  getAll: () => apiCall('/bookings', { method: 'GET' }),
-  getById: (id: string) => apiCall(`/bookings/${id}`, { method: 'GET' }),
-  getMyBookings: () => apiCall('/bookings/me', { method: 'GET' }),
+  getAll: () => apiCall('/booking', { method: 'GET' }),
+  getById: (id: string) => apiCall(`/booking/${id}`, { method: 'GET' }),
+  getMyBookings: () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/booking/${userId}`, { method: 'GET' });
+  },
   create: (data: any) =>
-    apiCall('/bookings', {
+    apiCall('/booking', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   book: (slotId: string) =>
-    apiCall('/bookings/book', {
+    apiCall('/booking/book', {
       method: 'POST',
       body: JSON.stringify({ slotId }),
     }),
   update: (id: string, data: any) =>
-    apiCall(`/bookings/${id}`, {
+    apiCall(`/booking/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
   delete: (id: string) =>
-    apiCall(`/bookings/${id}`, { method: 'DELETE' }),
+    apiCall(`/booking/${id}`, { method: 'DELETE' }),
+  cancelBooking: (bookingId: string) =>
+    apiCall(`/booking/${bookingId}`, { method: 'DELETE' }),
+  emailBookedUser: (bookingId: string) =>
+    apiCall(`/booking/${bookingId}/email`, { method: 'POST' }),
+};
+
+// Slot Endpoints
+export const slots = {
+  getOwned: () => apiCall('/slot/owned', { method: 'GET' }),
+  getAvailableByOwner: (ownerId: string) => apiCall(`/slot/${ownerId}`, { method: 'GET' }),
+  create: (data: any) =>
+    apiCall('/slot/create', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  activate: (slotId: string) =>
+    apiCall('/slot/activate', {
+      method: 'PUT',
+      body: JSON.stringify({ slotId }),
+    }),
+  deleteSlot: (slotId: string) =>
+    apiCall(`/slot/${slotId}`, { method: 'DELETE' }),
+  book: (slotId: string) =>
+    apiCall(`/slot/${slotId}/book`, { method: 'POST' }),
+  emailOwner: (slotId: string) =>
+    apiCall(`/slot/${slotId}/email`, { method: 'POST' }),
+};
+
+// Meeting Endpoints
+export const meetings = {
+  create: (data: any) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/meeting/${userId}/create`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  getMe: () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/meeting/${userId}`, { method: 'GET' });
+  },
+  accept: (meetingId: string) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/meeting/${userId}/${meetingId}/accept`, { method: 'POST' });
+  },
+  decline: (meetingId: string) => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/meeting/${userId}/${meetingId}/decline`, { method: 'POST' });
+  },
 };
