@@ -4,13 +4,14 @@ const UserDto      = require('../dtos/userdto');
 
 const BookingController = {
 
-  	async getMyBookings(req, res) {
-    		const userId = UserDto.validateUserId(req.user.userId);
-    		if (!userId) return res.status(400).json({ error: 'Bad User Id' });
-    		// 
-    		const bookings = BookingModel.findByUser(userId);
-    		res.json(BookingDto.responseBookings(bookings));
-  	},
+  async getMyBookings(req, res) {
+    const userId = req.user.userId;
+    const bookings = await BookingModel.findBookingsByUser(userId);
+	console.log(bookings)
+    res.status(200).json(BookingDto.responseBookings(bookings));
+  },
+
+  
 
 
 };

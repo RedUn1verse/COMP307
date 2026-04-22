@@ -7,7 +7,7 @@ const { authenticate }  = require('./auth');
  * @swagger
  * booking/me:
  *   get:
- *     summary: User retrieves all their bookings 
+ *     summary: User retrieves all their bookings which has slot and owner information
  *     tags: [Booking]
  *     responses:
  *       200:
@@ -51,26 +51,18 @@ router.delete('/:bookingId', (req, res) => { res.status(501).send("delete a book
 /**
  * @swagger
  * components:
-
- *   schemas: 
- *
+ *   schemas:
  *     Booking:
  *       type: object
  *       properties:
- *         owner_name:
- *           type: string
- *         date:
- *           type: string
- *         startTime:
- *           type: string
- *         endTime:
- *           type: string
- *         status:
- *           type: string
- *           description: State of the booking. Will be confirmed or unconfirmed
- *           example: unconfirmed
- *        
- *
+ *         bookingId:  { type: string }
+ *         title:      { type: string }
+ *         date:       { type: string }
+ *         startTime:  { type: string }
+ *         endTime:    { type: string }
+ *         ownerName:  { type: string }
+ *         ownerEmail: { type: string }
+ *         ownerPublicId: {type: string}
  */
 
 

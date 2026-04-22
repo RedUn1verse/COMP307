@@ -51,25 +51,6 @@ async create(userId, ownerId, slotId) {
 	return newBooking;
 },
 
-async delete(bookingId, userId, ownerId) {
-	const db = getDB();
-	
-	const booking = await db.collection('bookings').findOne({bookingId});
-	if (!booking) return false;
-	await db.collection('bookings').deleteOne({ bookingId });
-	await db.collection('users').updateOne(
-		{ userId },
-		{
-      			$pull: {
-        			bookings_ids: bookingId,
-        			request_booking_ids: bookingId
-      			}
-    		}
-  	);
-
-  	return true;
-},
-
 
 async delete(bookingId, userId, ownerId) {
     const db = getDB();
@@ -110,6 +91,25 @@ async getListBooking(bookingIds) {
 		};
 	}));
 },
+
+
+async findBookingsByUser(userId) {
+	const db = getDB();
+	const bookings = await db.collection('bookings').find({ userId }).toArray();
+	return Promise.all(bookings.map(async (booking) => {
+		const slot = await db.collection('slots').findOne({ slotId: booking.slotId }) ?? null;
+		let owner = null;
+		if (slot) {
+			const ownerUser = await db.collection('users').findOne({ userId: slot.ownerId }) ?? null;
+			const ownerRecord = await db.collection('owners').findOne({ userId: slot.ownerId }) ?? null;
+			if (ownerUser || ownerRecord) {
+				owner = { ...(ownerUser ?? {}), publicId: ownerRecord?.publicId ?? null };
+			}
+		}
+		return { ...booking, slot, owner };
+	}));
+},
+
 };
 
 module.exports = BookingModel;

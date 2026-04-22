@@ -233,3 +233,7 @@ Authorization: Bearer {{accessToken}}
 @emailSlotId = pbmkd179mo9k571l
 POST {{baseUrl}}/slot/{{emailSlotId}}/email
 Authorization: Bearer {{accessToken}}
+
+###
+GET {{baseUrl}}/booking/me
+Authorization: Bearer {{accessToken}}
