@@ -1,6 +1,18 @@
 const { getDB } = require('../db');
 const BookingModel = require('./bookingmodel');
 const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+
+
+function addDays(dateStr, days) {
+  const d = dayjs(dateStr, 'YYYY-MM-DD', true);
+  if (!d.isValid()) return null;
+  return d.add(days, 'day').format('YYYY-MM-DD');
+}
+
 const SlotModel = {
 
   async findById(slotId) {
@@ -30,6 +42,22 @@ const SlotModel = {
    async getAllSlots(ownerId) {
     const db = getDB();
     return await db.collection('slots').find({ ownerId }).toArray();
+  },
+
+  async createR(ownerId, date, startTime, endTime, title, isBooked, isPrivate, recurrence = 1) {
+    const dates = [];
+    for (let i = 0; i < recurrence; i++) {
+      const d = addDays(date, i * 7);
+      if (!d) return null;
+      dates.push(d);
+    }
+
+    const slots = [];
+    for (const d of dates) {
+      const slot = await SlotModel.create(ownerId, d, startTime, endTime, title, isBooked, isPrivate);
+      slots.push(slot);
+    }
+    return slots;
   },
 
 

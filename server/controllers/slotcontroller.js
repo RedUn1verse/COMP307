@@ -3,8 +3,15 @@ const UserModel    = require('../models/usermodel');
 const BookingModel = require('../models/bookingmodel');
 const SlotDto = require('../dtos/slotdto');
 const EmailService = require('../services/emailservice');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+const isValidDate = (s) => typeof s === 'string' && dayjs(s, 'YYYY-MM-DD', true).isValid();
+const isValidTime = (s) => typeof s === 'string' && dayjs(s, 'HH:mm', true).isValid();
 
 const SlotController = {
+
 
   async getAvailableByOwner(req, res) {
     const owner = await UserModel.findOwnerByPublicId(req.params.publicId);
@@ -13,6 +20,38 @@ const SlotController = {
     const slots = await SlotModel.getActiveByOwner(owner.userId);
 
     res.json(SlotDto.responseSlots(slots));
+  },
+
+  async createR(req, res) {
+
+    const ownerId = req.params.userId;
+    const owner = await UserModel.findById(ownerId);
+    if (owner.role !== "owner") {
+      return res.status(403).json({ error: 'Owner role required' });
+    }
+
+    const errors = [];
+    const { date, startTime, endTime, title, reccurence } = req.body ?? {};
+    if (typeof title !== 'string' || title.trim() === '') errors.push('title is required');
+    if (!isValidDate(date)) errors.push('date must be in YYYY-MM-DD format');
+    if (!isValidTime(startTime)) errors.push('startTime must be in HH:mm format');
+    if (!isValidTime(endTime)) errors.push('endTime must be in HH:mm format');
+    if (isValidTime(startTime) && isValidTime(endTime) && startTime >= endTime) {
+      errors.push('startTime must be before endTime');
+    }
+
+
+    if (errors.length) return res.status(400).json({ error: errors[0] });
+    const recurrence = reccurence ?? 1;
+    if (!Number.isInteger(recurrence) || recurrence < 1) {
+      return res.status(400).json({ error: 'reccurence must be a positive integer' });
+    }
+
+    const slots = await SlotModel.createR(ownerId, date, startTime, endTime, title, false, true, recurrence); // isBooked = false, isPrivate = true
+    if (!slots) return res.status(400).json({ error: 'Invalid date' });
+
+    res.status(201).json(SlotDto.responseSlots(slots));
+   
   },
 
   async create(req, res) {

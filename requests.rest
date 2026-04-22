@@ -224,3 +224,15 @@ Content-Type: application/json
   "optionId": "p2",
   "reccurence": 2
 }
+
+###
+POST {{baseUrl}}/slot/o1/createR
+Content-Type: application/json
+
+{
+  "title": "Weekly Review",
+  "date": "2026-05-28",
+  "startTime": "09:00",
+  "endTime": "10:00",
+  "reccurence": 3
+}

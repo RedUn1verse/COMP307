@@ -4,6 +4,44 @@ const { authenticate } = require('./auth');
 const router = express.Router();
 
 
+
+/**
+ * @swagger
+ * slot/{userId}/createR:
+ *   post:
+ *     summary: Owner creates one or more recurring slots (weekly, starts private)
+ *     description: Same as create, but also takes a `reccurence` integer. Creates slots, each 7 days apart starting from `date`.
+ *     tags: [Slot]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, date, startTime, endTime, reccurence]
+ *             properties:
+ *               title:      { type: string }
+ *               date:       { type: string, example: "2026-05-04" }
+ *               startTime:  { type: string, example: "09:00" }
+ *               endTime:    { type: string, example: "10:00" }
+ *               reccurence:
+ *                 type: integer
+ *                 description: Number of weekly occurrences to create (must be >= 1)
+ *                 example: 4
+ *     responses:
+ *       201:
+ *         description: Slots created successfully (not active)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: { $ref: '#/components/schemas/Slot' }
+ *       400: { description: Invalid input }
+ *       403: { description: Forbidden – owner role required }
+ */
+router.post('/:userId/createR', SlotController.createR);
+
+
 /**
  * @swagger
  * slot/{userId}/create:

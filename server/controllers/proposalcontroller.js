@@ -4,6 +4,9 @@ const ProposalDto   = require('../dtos/proposaldto');
 const BookingDto   = require('../dtos/bookingdto');
 const UserModel = require('../models/usermodel');
 const EmailService = require('../services/emailservice.js');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
 
 // TODO: Move to user Model + Convert to MongoDB
 const findUser = (userId) => db.users.find(u => u.userId === userId) ?? null;
