@@ -13,23 +13,26 @@ const findUserByName = (name)  => db.users.find(u => u.name?.toLowerCase() === n
 const ProposalController = {
     
     async getUserProposals(req, res) {
-        const userId = req.user.userId;
+        const userId = req.params.userId;
         const proposalList = await ProposalModel.findForUser(userId);
         res.status(200).json(ProposalDto.responseListForUser(proposalList, userId));
         
     },
     
     async getOwnerProposals(req, res) {
-        const ownerId = req.user.userId;
+        const ownerId = req.params.userId;
+        const owner = await UserModel.findById(ownerId)
+
+        if (owner.role !== "owner") return res.status(400).json("You are not an owner")
         const proposalList = await ProposalModel.findForOwner(ownerId);
         res.status(200).json(ProposalDto.responseListForOwner(proposalList));
     },
 
     async create(req, res){
-        const ownerId = req.user.userId;
-        // TODO: ROLE VERIFICATION IN MIDDLEWARE
-        // if (!me || me.role !== 'owner') return res.status(403).json({ error: 'Owner role required' });
+        const ownerId = req.params.userId;
+        const owner = await UserModel.findById(ownerId)
 
+        if (owner.role !== "owner") return res.status(400).json("You are not an owner")
         const { title, userNames, options } = req.body ?? {};
         if (typeof title !== 'string' || title.trim() === '') {
         return res.status(400).json({ error: 'title is required' });
@@ -65,7 +68,7 @@ const ProposalController = {
 
         const p = await ProposalModel.findById(req.params.proposalId);
         if (!p) return res.status(404).json({ error: 'Proposal not found' });
-        if (p.ownerId !== req.user.userId) return res.status(403).json({ error: 'Only the owner can select' });
+        if (p.ownerId !== req.params.userId) return res.status(403).json({ error: 'Only the owner can select' });
 
         const option = p.options.find(opt => opt.optionId === optionId);
         if (!option) return res.status(400).json({ error: 'Invalid optionId' });
@@ -92,11 +95,11 @@ const ProposalController = {
 
     const p = await ProposalModel.findById(req.params.proposalId);
     if (!p) return res.status(404).json({ error: 'Proposal not found' });
-    if (!p.userIds.includes(req.user.userId)) return res.status(404).json({ error: 'user is not invited' });
-    if (p.options.some(o => o.votes.includes(req.user.userId))) return res.status(404).json({ error: 'already voted' });
+    if (!p.userIds.includes(req.params.userId)) return res.status(404).json({ error: 'user is not invited' });
+    if (p.options.some(o => o.votes.includes(req.params.userId))) return res.status(404).json({ error: 'already voted' });
     
-    const proposal = await ProposalModel.vote(req.params.proposalId, req.user.userId, optionIds);
-    res.status(200).json(ProposalDto.responseForUser(proposal, req.user.userId));
+    const proposal = await ProposalModel.vote(req.params.proposalId, req.params.userId, optionIds);
+    res.status(200).json(ProposalDto.responseForUser(proposal, req.params.userId));
   },
 
 

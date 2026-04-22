@@ -80,18 +80,16 @@ Authorization: Bearer {{ownerAccessToken}}
 // ====================== PROPOSAL APIS ====================
 
 ###
-GET {{baseUrl}}/proposal/me
-Authorization: Bearer {{accessToken}}
+GET {{baseUrl}}/proposal/u1
+
 
 ###
 POST {{baseUrl}}/proposal/login
 ###
-GET {{baseUrl}}/proposal/owned
-Authorization: Bearer {{ownerAccessToken}}
+GET {{baseUrl}}/proposal/o1/owned
 ###
 
-POST {{baseUrl}}/proposal/create
-Authorization: Bearer {{ownerAccessToken}}
+POST {{baseUrl}}/proposal/u1/create
 Content-Type: application/json
 
 {

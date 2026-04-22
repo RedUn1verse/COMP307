@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * proposal/me:
+ * proposal/{userId}:
  *   get:
  *     summary: Authenticated user retrieves proposals they were invited to
  *     description: Response does not show vote count. Each option has myVote so the user can tell which they voted for.
@@ -20,11 +20,11 @@ const router = express.Router();
  *               type: array
  *               items: { $ref: '#/components/schemas/ProposalUserView' }
  */
-router.get('/me',authenticate, ProposalController.getUserProposals);
+router.get('/:userId',ProposalController.getUserProposals);
 
 /**
  * @swagger
- * proposal/owned:
+ * proposal/{userId}/owned:
  *   get:
  *     summary: Owner retrieves all proposals they created, including vote tallies
  *     tags: [Proposals]
@@ -37,13 +37,13 @@ router.get('/me',authenticate, ProposalController.getUserProposals);
  *               type: array
  *               items: { $ref: '#/components/schemas/ProposalOwnerView' }  
  */
-router.get('/owned', authenticate, ProposalController.getOwnerProposals);
+router.get('/:userId/owned', ProposalController.getOwnerProposals);
 
 
 
  /** 
 * @swagger
- * proposal/create:
+ * proposal/{userId}/create:
  *   post:
  *     summary: Owner creates a proposal with slot options for a specific list of users
  *     tags: [Proposals]
@@ -74,7 +74,7 @@ router.get('/owned', authenticate, ProposalController.getOwnerProposals);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/Error' }
  */
-router.post('/create', authenticate, ProposalController.create);
+router.post('/:userId/create', ProposalController.create);
 
 
 /**
@@ -117,7 +117,7 @@ router.post('/create', authenticate, ProposalController.create);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/Error' }
  */
-router.post('/:proposalId/select', authenticate, ProposalController.select);
+router.post('/:proposalId/select', ProposalController.select);
 
 
 /**
@@ -150,7 +150,7 @@ router.post('/:proposalId/select', authenticate, ProposalController.select);
  *             schema: { $ref: '#/components/schemas/Error' }
  * 
  */
-router.post('/:proposalId/vote', authenticate, ProposalController.vote);
+router.post('/:proposalId/vote', ProposalController.vote);
 
 
 
