@@ -97,6 +97,8 @@ const ProposalModel = {
         option.startTime,
         option.endTime,
         proposal.title,
+        true,
+        true
       );
       await Promise.all(proposal.userIds.map(uid =>
         BookingModel.create(uid, proposal.ownerId, slot.slotId)
