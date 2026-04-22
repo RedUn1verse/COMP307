@@ -29,7 +29,7 @@ loginForm?.addEventListener('submit', async (e) => {
 
         const data = await res.json();
 
-        localStorage.setItem('accessToken', data.token);
+        localStorage.setItem('accessToken', data.accessToken);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userRole', isOwner ? 'owner' : 'user');
