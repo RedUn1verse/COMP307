@@ -2,44 +2,13 @@ const express = require('express');
 const router = express.Router();
 const BookingController = require('../controllers/bookingcontroller');
 const { authenticate }  = require('./auth');
-/**
- * @swagger
- * booking/create:
- *   post:
- *     summary: User books an available slot
- *     tags: [Bookings]
- *     requestBody:
- *       required: true
- *       content:
- *         routerlication/json:
- *           schema:
- *             type: object
- *             required: [slotId]
- *             properties:
- *               slotId:
- *                 type: string
- *     responses:
- *       201:
- *         description: Slot booked successfully
- *         content:
- *           routerlication/json:
- *             schema:
- *               $ref: '#/components/schemas/Booking'
- *       400:
- *         description: Slot is already booked or unavailable
- *       403:
- *         description: Forbidden – user role required
- *       404:
- *         description: Slot not found
- */
-router.post('/create', (req, res) => { res.status(501).send("books a slot"); });
- 
+
 /**
  * @swagger
  * booking/me:
  *   get:
- *     summary: User retrieves all their bookings (both confirmed and unconfirmed)
- *     tags: [Bookings]
+ *     summary: User retrieves all their bookings 
+ *     tags: [Booking]
  *     responses:
  *       200:
  *         description: List of the authenticated user's bookings
@@ -60,7 +29,7 @@ router.get('/me', authenticate, BookingController.getMyBookings);
  * booking/{bookingId}:
  *   delete:
  *     summary: User cancels one of their bookings
- *     tags: [Bookings]
+ *     tags: [Booking]
  *     parameters:
  *       - in: path
  *         name: bookingId

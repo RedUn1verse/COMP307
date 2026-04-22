@@ -9,7 +9,7 @@ const router = express.Router();
  * slot/create:
  *   post:
  *     summary: Owner creates a new booking slot (starts private)
- *     tags: [Slots]
+ *     tags: [Slot]
  *     requestBody:
  *       required: true
  *       content:
@@ -34,7 +34,7 @@ router.post('/create', authenticate, SlotController.create);
  * slot/owned:
  *   get:
  *     summary: Owner retrieves all their slots (private + active); each slot includes its booking (if any).
- *     tags: [Slots]
+ *     tags: [Slot]
  *     responses:
  *       200:
  *         description: List of all slots owned by the authenticated owner, with a `bookings` field attached where users have booked the slot.
@@ -69,7 +69,7 @@ router.get('/owned', authenticate, SlotController.getOwned);
  * slot/activate:
  *   put:
  *     summary: Owner makes one of their slots active (public)
- *     tags: [Slots]
+ *     tags: [Slot]
  *     requestBody:
  *      required: true
  *      content:
@@ -92,7 +92,7 @@ router.put('/activate', authenticate, SlotController.activate);
  * slot/{ownerId}:
  *   get:
  *     summary: A user can find all active  && unbooked slots for a specific owner
- *     tags: [Slots]
+ *     tags: [Slot]
  *     parameters:
  *       - in: path
  *         name: ownerId
@@ -121,7 +121,7 @@ router.get('/:ownerId', SlotController.getAvailableByOwner);
  * slot/{slotId}:
  *   delete:
  *     summary: Owner deletes a slot. If a/many user(s) had booked it, a mailto notification URL is returned.
- *     tags: [Slots]
+ *     tags: [Slot]
  *     parameters:
  *       - in: path
  *         name: slotId
@@ -139,7 +139,7 @@ router.delete('/:slotId', authenticate, SlotController.deleteSlot);
  * slot/{slotId}/book:
  *   post:
  *     summary: Authenticated user or owner books another owner's active unbooked slot
- *     tags: [Slots]
+ *     tags: [Slot]
  *     parameters:
  *       - in: path
  *         name: slotId
@@ -158,7 +158,7 @@ router.post('/:slotId/book', authenticate, SlotController.book);
  * slot/{slotId}/email:
  *   post:
  *     summary: Used for an Authenticated user to composes an email to the owner of a slot. Returns a mailto URL with the to field addressed to the owner.
- *     tags: [Slots]
+ *     tags: [Slot]
  *     parameters:
  *       - in: path
  *         name: slotId
