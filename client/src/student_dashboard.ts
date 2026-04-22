@@ -191,7 +191,7 @@ async function handleBookingSubmit(form: HTMLFormElement, professorName: string,
       studentId: localStorage.getItem('userId') || 'u1', // Default to u1 if not set
     };
 
-    await apiCall('/booking/create', {
+    await apiCall('/meeting/create', {
       method: 'POST',
       body: JSON.stringify(bookingData),
     });

@@ -3,6 +3,7 @@ const router = express.Router();
 const BookingController = require('../controllers/bookingcontroller');
 const { authenticate }  = require('./auth');
 
+// TODO: MAKE IT USER ONLY and create version for owner
 /**
  * @swagger
  * booking/me:
@@ -28,23 +29,23 @@ router.get('/me', authenticate, BookingController.getMyBookings);
  * @swagger
  * booking/{bookingId}:
  *   delete:
- *     summary: User cancels one of their bookings
- *     tags: [Booking]
+ *     summary: User cancels their booking. The slot becomes available again and a mailto URL is returned for notifying the owner.
+ *     tags: [Bookings]
  *     parameters:
  *       - in: path
  *         name: bookingId
  *         required: true
- *         schema:
- *           type: string
+ *         schema: { type: string }
  *     responses:
  *       200:
- *         description: Booking cancelled successfully
- *       403:
- *         description: Forbidden – can only cancel your own bookings
- *       404:
- *         description: Booking not found
+ *         description: Booking cancelled. Response body is a `url` URL string for notifying the slot owner.
+ *         content:
+ *           application/json:
+ *             schema: { type: string }
+ *       403: { description: Forbidden – can only cancel your own bookings }
+ *       404: { description: Booking not found }
  */
-router.delete('/:bookingId', (req, res) => { res.status(501).send("delete a booking"); });
+router.delete('/:bookingId', authenticate, BookingController.deleteBooking);
 
 // ================== Swagger Schemas =======================
 

@@ -1,4 +1,5 @@
 const { getDB } = require('../db');
+const BookingModel = require('./bookingmodel');
 const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 const SlotModel = {
 
@@ -91,17 +92,12 @@ async setActive(slotId) {
     const slot = await db.collection('slots').findOne({ slotId });
     if (!slot) return null;
 
-    const bookingId = genId();
-    const booking = { bookingId, userId, slotId };
-    await db.collection('bookings').insertOne(booking);
+    const booking = await BookingModel.create(userId, slot.ownerId, slot.slotId)
     await db.collection('slots').updateOne(
       { slotId },
       { $set: { isBooked: true } }
     );
-    await db.collection('users').updateMany(
-      { userId: { $in: [userId, slot.ownerId] } },
-      { $push: { bookingIds: bookingId } }
-    );
+   
     return booking;
   },
 

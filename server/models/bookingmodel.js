@@ -1,7 +1,13 @@
 const { getDB } = require('../db');
+const UserModel = require('./usermodel');
 const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 
 const BookingModel = {
+
+async findById(bookingId) {
+	const db = getDB();
+	return await db.collection('bookings').findOne({ bookingId }) ?? null;
+},
   
 async findByUser(userId) {
 	const db = getDB();
@@ -51,16 +57,18 @@ async create(userId, ownerId, slotId) {
 	return newBooking;
 },
 
-
 async delete(bookingId, userId, ownerId) {
-    const db = getDB();
-    
-    const booking = await db.collection('bookings').findOne({ bookingId });
-    if (!booking) return false;
+	const db = getDB();
 
-    await db.collection('bookings').deleteOne({ bookingId });
+	const booking = await db.collection('bookings').findOne({ bookingId });
+	if (!booking) return false;
 
-    await db.collection('users').updateMany(
+	await db.collection('bookings').deleteOne({ bookingId });
+	await db.collection('slots').updateOne(
+		{ slotId: booking.slotId },
+		{ $set: { isBooked: false} }
+	);
+	await db.collection('users').updateMany(
         { 
             userId: { $in: [userId, ownerId] } 
         },
@@ -71,7 +79,7 @@ async delete(bookingId, userId, ownerId) {
         }
     );
 
-    return true;
+	return true;
 },
 
 async getListBooking(bookingIds) {
@@ -95,7 +103,11 @@ async getListBooking(bookingIds) {
 
 async findBookingsByUser(userId) {
 	const db = getDB();
-	const bookings = await db.collection('bookings').find({ userId }).toArray();
+	const bookingIds = await UserModel.getAllBookingIds(userId);
+
+	const bookings = await db.collection('bookings').find({ 
+        bookingId: { $in: bookingIds } 
+    }).toArray();
 	return Promise.all(bookings.map(async (booking) => {
 		const slot = await db.collection('slots').findOne({ slotId: booking.slotId }) ?? null;
 		let owner = null;

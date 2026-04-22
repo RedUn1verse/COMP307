@@ -213,7 +213,7 @@ Authorization: Bearer {{ownerAccessToken}}
 Content-Type: application/json
 
 {
-  "slotId": "j83objt3mo9gr7a6"
+  "slotId": "i538vwnlmoa8e3ny"
 }
 ###
 @publicId = d290f1ee-6c54-4b01-90e6-d701748f0851
@@ -225,7 +225,7 @@ DELETE {{baseUrl}}/slot/{{deleteSlotId}}
 Authorization: Bearer {{ownerAccessToken}}
 
 ###
-@bookSlotId = pbmkd179mo9k571l
+@bookSlotId = i538vwnlmoa8e3ny
 POST {{baseUrl}}/slot/{{bookSlotId}}/book
 Authorization: Bearer {{accessToken}}
 
@@ -236,4 +236,10 @@ Authorization: Bearer {{accessToken}}
 
 ###
 GET {{baseUrl}}/booking/me
+Authorization: Bearer {{accessToken}}
+
+###
+@deleteBooking = v5r1aw5emoa4f2b5
+
+DELETE {{baseUrl}}/booking/{{deleteBooking}}
 Authorization: Bearer {{accessToken}}
