@@ -140,8 +140,7 @@ Content-Type: application/json
 ###
 // ========================  SLOTS ========================
 
-POST {{baseUrl}}/slot/create
-Authorization: Bearer {{ownerAccessToken}}
+POST {{baseUrl}}/slot/o1/create
 Content-Type: application/json
 
 {
@@ -153,76 +152,30 @@ Content-Type: application/json
 
 ###
 
-GET {{baseUrl}}/slot/owned
-Authorization: Bearer {{ownerAccessToken}}
-Content-Type: application/json
-
-
-// ======= EXAMPLE RETURN ========
-# [
-#   {
-#     "title": "TEST DEMO",
-#     "date": "2026-06-20",
-#     "startTime": "11:00",
-#     "endTime": "12:30",
-#     "isPrivate": true,
-#     "isBooked": true,
-#     "bookings": []
-#   },
-#   {
-#     "title": "770 Final",
-#     "date": "2026-05-04",
-#     "startTime": "09:00",
-#     "endTime": "11:00",
-#     "isPrivate": true,
-#     "isBooked": true,
-#     "bookings": [
-#       {
-#         "bookingId": "0gba0q4umo94y5n3",
-#         "userName": "Alice Smith",
-#         "userEmail": "alice@example.com"
-#       },
-#       {
-#         "bookingId": "v09bwpkjmo94y5n3",
-#         "userName": "Bob Jones",
-#         "userEmail": "bob@example.com"
-#       },
-#       {
-#         "bookingId": "8kz7f2k0mo94y5n3",
-#         "userName": "Grace Brunch",
-#         "userEmail": "grace@example.com"
-#       }
-#     ]
-#   }
-# ]
-
+GET {{baseUrl}}/slot/o1/owned
 
 ###
-PUT {{baseUrl}}/slot/activate
-Authorization: Bearer {{ownerAccessToken}}
-Content-Type: application/json
+@slotIdActivate = r8efwakmmoad7ton
+PUT {{baseUrl}}/slot/o1/{{slotIdActivate}}/activate
 
-{
-  "slotId": "i538vwnlmoa8e3ny"
-}
+
 ###
 @publicId = d290f1ee-6c54-4b01-90e6-d701748f0851
 GET {{baseUrl}}/slot/{{publicId}}
 
 ###
-@deleteSlotId = oy1l2705mo9n0u4h
-DELETE {{baseUrl}}/slot/{{deleteSlotId}}
+@deleteSlotId = i538vwnlmoa8e3ny
+DELETE {{baseUrl}}/slot/o1/{{deleteSlotId}}
 Authorization: Bearer {{ownerAccessToken}}
 
 ###
 @bookSlotId = i538vwnlmoa8e3ny
-POST {{baseUrl}}/slot/{{bookSlotId}}/book
+POST {{baseUrl}}/slot/u1/{{bookSlotId}}/book
 Authorization: Bearer {{accessToken}}
 
 ### 
 @emailSlotId = pbmkd179mo9k571l
-POST {{baseUrl}}/slot/{{emailSlotId}}/email
-Authorization: Bearer {{accessToken}}
+POST {{baseUrl}}/slot/u1/{{emailSlotId}}/email
 
 ###
 GET {{baseUrl}}/booking/u1

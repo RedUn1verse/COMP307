@@ -79,7 +79,7 @@ router.post('/:userId/create', ProposalController.create);
 
 /**
  * @swagger
- * proposal/{proposalId}/select:
+ * proposal/{userId}/{proposalId}/select:
  *   post:
  *     summary: Owner selects the option they want to book
  *     description: Closes the proposal, creates a new booking for all invited users and sends the owner a notificaton
@@ -117,12 +117,12 @@ router.post('/:userId/create', ProposalController.create);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/Error' }
  */
-router.post('/:proposalId/select', ProposalController.select);
+router.post('/:userId/:proposalId/select', ProposalController.select);
 
 
 /**
  * @swagger
- * proposal/{proposalId}/vote:
+ * proposal/{userId}/{proposalId}/vote:
  *   post:
  *     summary: Invited user casts their single vote for one or more options
  *     description: A user may vote only once per proposal. Subsequent vote requests from the same user are rejected with 400. A user may include multiple optionIds in this single call.
@@ -150,7 +150,7 @@ router.post('/:proposalId/select', ProposalController.select);
  *             schema: { $ref: '#/components/schemas/Error' }
  * 
  */
-router.post('/:proposalId/vote', ProposalController.vote);
+router.post('/:userId/:proposalId/vote', ProposalController.vote);
 
 
 

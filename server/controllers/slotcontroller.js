@@ -7,7 +7,7 @@ const EmailService = require('../services/emailservice');
 const SlotController = {
 
   async getAvailableByOwner(req, res) {
-    const owner = await UserModel.findOwnerByPublicId(req.params.ownerId);
+    const owner = await UserModel.findOwnerByPublicId(req.params.publicId);
     if (!owner) return res.status(404).json({ errors: ['Owner not found'] });
 
     const slots = await SlotModel.getActiveByOwner(owner.userId);
@@ -17,7 +17,7 @@ const SlotController = {
 
   async create(req, res) {
 
-    const ownerId = req.user.userId;
+    const ownerId = req.params.userId;
     const owner = await UserModel.findById(ownerId);
     if (owner.role !== "owner") {
       return res.status(403).json({ error: 'Owner role required' });
@@ -38,7 +38,7 @@ const SlotController = {
 
   async getOwned(req, res) {
 
-    const ownerId = req.user.userId;
+    const ownerId = req.params.userId;
     const owner = await UserModel.findById(ownerId);
 
     if (owner.role !== 'owner') {
@@ -53,9 +53,9 @@ const SlotController = {
   },
 
   async activate(req, res) {
-    const slot = await SlotModel.findById(req.body.slotId);
+    const slot = await SlotModel.findById(req.params.slotId);
     if (!slot) return res.status(404).json({ error: 'Slot not found' });
-    if (slot.ownerId !== req.user.userId) {
+    if (slot.ownerId !== req.params.userId) {
       return res.status(403).json({ error: 'Only the owner can activate this slot' });
     }
 
@@ -68,7 +68,7 @@ const SlotController = {
     const slot = await SlotModel.findById(req.params.slotId);
     const eSlot = await UserModel.enrichOwnerName(slot);
     if (!slot) return res.status(404).json({ error: 'Slot not found' });
-    if (slot.ownerId !== req.user.userId) {
+    if (slot.ownerId !== req.params.userId) {
       return res.status(403).json({ error: 'Only the owner can delete this slot' });
     }    
 
@@ -98,7 +98,7 @@ const SlotController = {
 
   async book(req, res) {
 
-    const bookerId = req.user.userId;
+    const bookerId = req.params.userId;
     const slot = await SlotModel.findById(req.params.slotId);
     if (!slot) return res.status(404).json({ error: 'Slot not found' });
     if (slot.isPrivate) return res.status(403).json({ error: 'Slot is not active' });

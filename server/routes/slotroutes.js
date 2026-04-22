@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * slot/create:
+ * slot/{userId}/create:
  *   post:
  *     summary: Owner creates a new booking slot (starts private)
  *     tags: [Slot]
@@ -27,11 +27,11 @@ const router = express.Router();
  *       400: { description: Invalid input }
  *       403: { description: Forbidden – owner role required }
  */
-router.post('/create', authenticate, SlotController.create);
+router.post('/:userId/create', SlotController.create);
 
 /**
  * @swagger
- * slot/owned:
+ * slot/{userId}/owned:
  *   get:
  *     summary: Owner retrieves all their slots (private + active); each slot includes its booking (if any).
  *     tags: [Slot]
@@ -62,40 +62,31 @@ router.post('/create', authenticate, SlotController.create);
  *                              userEmail: { type: string, description: Email of the user who booked this slot }
  *       403: { description: Forbidden – owner role required }
  */
-router.get('/owned', authenticate, SlotController.getOwned);
+router.get('/:userId/owned', SlotController.getOwned);
 
 /**
  * @swagger
- * slot/activate:
+ * slot/{userId}/{slotId}/activate:
  *   put:
  *     summary: Owner makes one of their slots active (public)
  *     tags: [Slot]
- *     requestBody:
- *      required: true
- *      content:
- *          application/json:
- *              schema:
- *              type: object
- *              required: [slotId]
- *              properties:
- *                  slotId:     { type: string }
  *     responses:
  *       200: { description: Slot activated }
  *       403: { description: Forbidden – not the owner }
  *       404: { description: Slot not found }
  */
-router.put('/activate', authenticate, SlotController.activate);
+router.put('/:userId/:slotId/activate', SlotController.activate);
 
 
 /**
  * @swagger
- * slot/{ownerId}:
+ * slot/{publicId}:
  *   get:
  *     summary: A user can find all active  && unbooked slots for a specific owner
  *     tags: [Slot]
  *     parameters:
  *       - in: path
- *         name: ownerId
+ *         name: publicId
  *         required: true
  *         schema:
  *           type: string
@@ -113,12 +104,12 @@ router.put('/activate', authenticate, SlotController.activate);
  *       404:
  *         description: Owner not found
  */
-router.get('/:ownerId', SlotController.getAvailableByOwner);
+router.get('/:publicId', SlotController.getAvailableByOwner);
 
 
 /**
  * @swagger
- * slot/{slotId}:
+ * slot/{userId}/{slotId}:
  *   delete:
  *     summary: Owner deletes a slot. If a/many user(s) had booked it, a mailto notification URL is returned.
  *     tags: [Slot]
@@ -132,11 +123,11 @@ router.get('/:ownerId', SlotController.getAvailableByOwner);
  *       403: { description: Forbidden – not the owner }
  *       404: { description: Slot not found }
  */
-router.delete('/:slotId', authenticate, SlotController.deleteSlot);
+router.delete('/:userId/:slotId', SlotController.deleteSlot);
 
 /**
  * @swagger
- * slot/{slotId}/book:
+ * slot/{userId}/{slotId}/book:
  *   post:
  *     summary: Authenticated user or owner books another owner's active unbooked slot
  *     tags: [Slot]
@@ -151,11 +142,11 @@ router.delete('/:slotId', authenticate, SlotController.deleteSlot);
  *       403: { description: Slot is private }
  *       404: { description: Slot not found }
  */
-router.post('/:slotId/book', authenticate, SlotController.book);
+router.post('/:userId/:slotId/book', SlotController.book);
 
 /**
  * @swagger
- * slot/{slotId}/email:
+ * slot/{userId}/{slotId}/email:
  *   post:
  *     summary: Used for an Authenticated user to composes an email to the owner of a slot. Returns a mailto URL with the to field addressed to the owner.
  *     tags: [Slot]
@@ -169,7 +160,7 @@ router.post('/:slotId/book', authenticate, SlotController.book);
  *         description: A "url" mailto URL string addressed to the slot's owner.
  *       404: { description: Slot or owner not found }
  */
-router.post('/:slotId/email', authenticate, SlotController.emailOwner);
+router.post('/:userId/:slotId/email', SlotController.emailOwner);
 
 
 module.exports = router;
