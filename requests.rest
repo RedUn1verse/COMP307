@@ -129,13 +129,13 @@ Content-Type: application/json
 }
 
 ###
-@proposalId = sm8qpiosmo97f959
+@proposalId = xyrfnlkmmo9n00dx
 POST {{baseUrl}}/proposal/{{proposalId}}/select
 Authorization: Bearer {{ownerAccessToken}}
 Content-Type: application/json
 
 {
-  "optionId": "g6zsmfphmo97f959"
+  "optionId": "l5qsnw12mo9n00dx"
 }
 ###
 @voteProposalId = 71esxmnxmo95ecx9
@@ -218,3 +218,8 @@ Content-Type: application/json
 ###
 @publicId = d290f1ee-6c54-4b01-90e6-d701748f0851
 GET {{baseUrl}}/slot/{{publicId}}
+
+###
+@deleteSlotId = oy1l2705mo9n0u4h
+DELETE {{baseUrl}}/slot/{{deleteSlotId}}
+Authorization: Bearer {{ownerAccessToken}}

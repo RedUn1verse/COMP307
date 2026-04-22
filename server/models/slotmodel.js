@@ -73,14 +73,20 @@ async setActive(slotId) {
 
 
 
-// ================== TO IMPLEMENT =============================
-  update(slotId) {
-    return
+  async delete(slotId) {
+    const db = getDB();
+    const slot = await db.collection('slots').findOne({ slotId });
+    if (!slot) return null;
+
+    await db.collection('slots').deleteOne({ slotId });
+    await db.collection('owners').updateOne(
+      { userId: slot.ownerId },
+      { $pull: { activeSlots: slotId, privateSlots: slotId } }
+    );
+
+    return slot;
   },
 
-  delete(slotId) {
-    return
-  },
 };
 
 module.exports = SlotModel;

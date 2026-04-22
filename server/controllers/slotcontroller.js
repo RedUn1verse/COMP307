@@ -63,38 +63,37 @@ const SlotController = {
     res.json(SlotDto.responseSlot(updated));
   },
 
-  async findBySlotId(slotId) {
-    const db = getDB();
-    return await db.collection('slots').findOne({ slotId }) ?? null;
-  },
 
   async deleteSlot(req, res) {
-    const slot = await SlotModel.findBySlotId(req.params.slotId);
+    const slot = await SlotModel.findById(req.params.slotId);
+    const eSlot = await UserModel.enrichOwnerName(slot);
     if (!slot) return res.status(404).json({ error: 'Slot not found' });
     if (slot.ownerId !== req.user.userId) {
       return res.status(403).json({ error: 'Only the owner can delete this slot' });
-    }
+    }    
 
-    const bookingIds = await UserModel.getSlotBookingIds(slot.slotId);
+    const bookingIds = await UserModel.getSlotBookingIds(slot.ownerId, slot.slotId);
 
     emails = []
-    
-    if (bookingIds){
+  
+    if (bookingIds && bookingIds.length > 0) {
       const bookings = await BookingModel.getListBooking(bookingIds);
-      emails = bookings.map(booking => booking.email);
-      Promise.all(bookingIds.map( bookingId => await BookingModel.delete(bookingId)))
+      emails = bookings.map(booking => booking.userEmail); 
+      await Promise.all(bookingIds.map(bookingId => BookingModel.delete(bookingId)));
     }
+    
+    await SlotModel.delete(slot.slotId);
 
-    const { bookedUser } = await SlotModel.delete(slot.slotId);
-
-    let notifyUrl = null;
-    if (emails) {
+    url = ""
+    if (emails && emails.length > 0) {
+      // Join array of emails into a single string: "email1@test.com,email2@test.com"s
+      const to = emails.join(',');
       const subject = `Your booking for "${slot.title}" has been cancelled`;
-      const body = `Your booking on ${slot.date} from ${slot.startTime} to ${slot.endTime} for "${slot.title}" has been cancelled by the owner.\n\n`;
-      notifyUrl = EmailService.buildMailto(bookedUser.email, subject, body);
-    }
+      const body = `Your booking on ${slot.date} from ${slot.startTime} to ${slot.endTime} for "${slot.title}" has been cancelled by ${eSlot.ownerName}.\n\n`;
+      url = EmailService.buildMailto(to, subject, body);
 
-    res.json({ deleted: true, notifyUrl });
+    }
+    res.status(200).json({url});
   },
 
   

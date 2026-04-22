@@ -116,33 +116,9 @@ router.put('/activate', authenticate, SlotController.activate);
 router.get('/:ownerId', SlotController.getAvailableByOwner);
 
 
-
-
 /**
  * @swagger
- * slot/owned:
- *   get:
- *     summary: Owner retrieves all their slots, private and active
- *     tags: [Slots]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of all slots owned by the authenticated owner
- *         content:
- *           routerlication/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/SlotWithBooking'
- *       403:
- *         description: Forbidden – owner role required
- */
-router.get('/slots', (req, res) => { res.status(501).send("get all slots private and active"); });
-
-/**
- * @swagger
- * slot/slotId:
+ * slot/{slotId}:
  *   delete:
  *     summary: Owner deletes a slot. If a user had booked it, a mailto notification URL is returned.
  *     tags: [Slots]
@@ -156,7 +132,7 @@ router.get('/slots', (req, res) => { res.status(501).send("get all slots private
  *       403: { description: Forbidden – not the owner }
  *       404: { description: Slot not found }
  */
-router.delete('/delete', authenticate, SlotController.deleteSlot);
+router.delete('/:slotId', authenticate, SlotController.deleteSlot);
 
 // /**
 //  * @swagger

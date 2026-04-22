@@ -51,7 +51,7 @@ async create(userId, ownerId, slotId) {
 	return newBooking;
 },
 
-async delete({bookingId, userId}) {
+async delete(bookingId, userId, ownerId) {
 	const db = getDB();
 	
 	const booking = await db.collection('bookings').findOne({bookingId});
@@ -70,6 +70,28 @@ async delete({bookingId, userId}) {
   	return true;
 },
 
+
+async delete(bookingId, userId, ownerId) {
+    const db = getDB();
+    
+    const booking = await db.collection('bookings').findOne({ bookingId });
+    if (!booking) return false;
+
+    await db.collection('bookings').deleteOne({ bookingId });
+
+    await db.collection('users').updateMany(
+        { 
+            userId: { $in: [userId, ownerId] } 
+        },
+        {
+            $pull: {
+                bookingIds: bookingId, 
+            }
+        }
+    );
+
+    return true;
+},
 
 async getListBooking(bookingIds) {
 	const db = getDB();

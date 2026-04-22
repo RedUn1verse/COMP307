@@ -9,6 +9,7 @@ const UserModel = {
     return await db.collection('users').findOne({ userId });
   },
 
+  
   async findByEmail(email) {
     const db = getDB();
     if (typeof email !== 'string') return null;
@@ -86,6 +87,24 @@ const UserModel = {
     const db = getDB();
     const user = await db.collection('users').findOne({ userId });
     return user?.bookingIds ?? [];
+  },
+
+  async getSlotBookingIds(ownerId, slotId) {
+
+    const user = await UserModel.findById(ownerId);
+
+    if (!user || !user.bookingIds || user.bookingIds.length === 0) {
+      return [];
+    }
+
+    const db = getDB();
+
+    const matchingBookings = await db.collection("bookings").find({
+      bookingId: { $in: user.bookingIds },
+      slotId: slotId
+    }).toArray();
+
+    return matchingBookings.map(booking => booking.bookingId);
   },
   // =================== MAIN FUNCTIONS =======================
   async getActiveOwners(){
