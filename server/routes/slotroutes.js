@@ -3,6 +3,35 @@ const SlotController   = require('../controllers/slotcontroller');
 const { authenticate } = require('./auth');
 const router = express.Router();
 
+
+/**
+ * @swagger
+ * slot/create:
+ *   post:
+ *     summary: Owner creates a new booking slot (starts private)
+ *     tags: [Slots]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, date, startTime, endTime]
+ *             properties:
+ *               title:     { type: string }
+ *               date:      { type: string }
+ *               startTime: { type: string }
+ *               endTime:   { type: string }
+ *     responses:
+ *       201: { description: Slot created successfully (private by default) }
+ *       400: { description: Invalid input }
+ *       403: { description: Forbidden – owner role required }
+ */
+router.post('/create', authenticate, SlotController.create);
+
+
+
+
 /**
  * @swagger
  * slot/{owner_id}:
@@ -31,43 +60,7 @@ const router = express.Router();
  */
 router.get('/:owner_id', authenticate, SlotController.getAvailableByOwner);
 
-/**
- * @swagger
- * slot/create:
- *   post:
- *     summary: Owner creates a new booking slot
- *     tags: [Slots]
- *     requestBody:
- *       required: true
- *       content:
- *         routerlication/json:
- *           schema:
- *             type: object
- *             required: [title, startTime, endTime]
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               startTime:
- *                 type: string
- *                 format: date-time
- *               endTime:
- *                 type: string
- *                 format: date-time
- *     responses:
- *       201:
- *         description: Slot created successfully
- *         content:
- *           routerlication/json:
- *             schema:
- *               $ref: '#/components/schemas/Slot'
- *       403:
- *         description: Forbidden – owner role required
- */
-router.post('/create', (req, res) => {
-  res.status(501).send('owner create slots');
-});
+
 
 
 /**

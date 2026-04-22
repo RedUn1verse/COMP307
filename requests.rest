@@ -148,3 +148,15 @@ Content-Type: application/json
 }
 
 ###
+// ========================  SLOTS ========================
+
+POST {{baseUrl}}/slot/create
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "title"     : "Pop Quiz",
+  "date"      : "2026-03-03",
+  "startTime" : "9:00",
+  "endTime"   : "13:00",
+}
