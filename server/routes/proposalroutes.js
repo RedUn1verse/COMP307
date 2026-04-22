@@ -286,9 +286,9 @@ router.post('/:userId/:proposalId/vote', ProposalController.vote);
  *           type: string
  *           example: "p1-opt-a"
  *         reccurence:
- *           type: string
+ *           type: integer
  *           description: Must be a number equal or bigger
- *           example: "1"
+ *           example: 1
  * 
  *     ProposalVoteRequest:
  *       type: object
