@@ -31,10 +31,35 @@ const router = express.Router();
  *         description: Invalid credentials
  */
 router.post('/login', (req, res) => {
-   //TODO: change harcode user with req
-   const user = {userId: 'u1'}
-   const accessToken = jwt.sign(user, DUMMY_SECRET_TOKEN)
-   res.json({accessToken: accessToken})
+   try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+         return res.status(400).json({ error: 'Email and password are required' });
+      }
+
+      if (!DUMMY_SECRET_TOKEN) {
+         console.error('DUMMY_SECRET_TOKEN not set in environment variables');
+         return res.status(500).json({ error: 'Server configuration error' });
+      }
+
+      // For now, accept any McGill email/password combo
+      // TODO: Implement real user validation from database
+      const isOwner = email.endsWith('@mcgill.ca') && !email.includes('@mail.');
+      const userId = isOwner ? 'o1' : 'u1';
+
+      const user = { userId };
+      const accessToken = jwt.sign(user, DUMMY_SECRET_TOKEN);
+      
+      res.json({ 
+         accessToken: accessToken,
+         userId: userId,
+         email: email
+      });
+   } catch (err) {
+      console.error('Login error:', err);
+      res.status(500).json({ error: 'Login failed' });
+   }
 });
 
 
