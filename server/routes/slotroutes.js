@@ -140,46 +140,23 @@ router.get('/:ownerId', SlotController.getAvailableByOwner);
  */
 router.get('/slots', (req, res) => { res.status(501).send("get all slots private and active"); });
 
-
-// /**
-//  * @swagger
-//  * /slot/{slotId}:
-//  *   put:
-//  *     summary: Owner updates a slot's details
-//  *     tags: [Slots]
-//  *     parameters:
-//  *       - in: path
-//  *         name: slotId
-//  *         required: true
-//  *         schema:
-//  *           type: string
-//  *     requestBody:
-//  *       required: true
-//  *       content:
-//  *         routerlication/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               title:
-//  *                 type: string
-//  *               description:
-//  *                 type: string
-//  *               startTime:
-//  *                 type: string
-//  *                 format: date-time
-//  *               endTime:
-//  *                 type: string
-//  *                 format: date-time
-//  *     responses:
-//  *       200:
-//  *         description: Slot updated successfully
-//  *       403:
-//  *         description: Forbidden – owner role required
-//  *       404:
-//  *         description: Slot not found
-//  */
-// router.put('/slots/:slotId', (req, res) => { res.status(501).send("update a slot"); });
-
+/**
+ * @swagger
+ * slot/slotId:
+ *   delete:
+ *     summary: Owner deletes a slot. If a user had booked it, a mailto notification URL is returned.
+ *     tags: [Slots]
+ *     parameters:
+ *       - in: path
+ *         name: slotId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: Slot deleted. url is a mailto link which will notify users if the slot is booked. }
+ *       403: { description: Forbidden – not the owner }
+ *       404: { description: Slot not found }
+ */
+router.delete('/delete', authenticate, SlotController.deleteSlot);
 
 // /**
 //  * @swagger
