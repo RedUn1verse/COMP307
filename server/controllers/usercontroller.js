@@ -5,7 +5,7 @@ const UserController = {
 
   async getMe(req, res) {
 
-    const user = await UserModel.findById(req.user.userId);
+    const user = await UserModel.findById(req.params.userId);
 
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json(UserDto.responseUser(user));

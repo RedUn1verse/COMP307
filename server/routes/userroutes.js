@@ -39,7 +39,7 @@ router.get('/active', UserController.getActiveOwners);
 
 /**
  * @swagger
- * user/me:
+ * user/{userId}:
  *   get:
  *     summary: Get the authenticated user's information
  *     tags: [Users]
@@ -57,7 +57,7 @@ router.get('/active', UserController.getActiveOwners);
  *       401:
  *         description: Unauthorized
  */
-router.get('/me',authenticate, UserController.getMe);
+router.get('/:userId', UserController.getMe);
 
 /**
  * @swagger

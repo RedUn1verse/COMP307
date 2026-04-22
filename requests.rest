@@ -190,3 +190,7 @@ DELETE {{baseUrl}}/booking/u1/{{deleteBooking}}
 @emailBooking = p0koz4f1moa48dxm
 POST {{baseUrl}}/booking/o1/{{emailBooking}}/email
 
+
+###
+GET {{baseUrl}}/user/u1
+
