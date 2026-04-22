@@ -126,27 +126,12 @@ export const slots = {
 
 // Meeting Endpoints
 export const meetings = {
-  create: (data: any) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) throw new Error('No user ID found');
-    return apiCall(`/meeting/${userId}/create`, {
+  create: (data: any) =>
+    apiCall('/meeting/create', {
       method: 'POST',
       body: JSON.stringify(data),
-    });
-  },
-  getMe: () => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) throw new Error('No user ID found');
-    return apiCall(`/meeting/${userId}`, { method: 'GET' });
-  },
-  accept: (meetingId: string) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) throw new Error('No user ID found');
-    return apiCall(`/meeting/${userId}/${meetingId}/accept`, { method: 'POST' });
-  },
-  decline: (meetingId: string) => {
-    const userId = localStorage.getItem('userId');
-    if (!userId) throw new Error('No user ID found');
-    return apiCall(`/meeting/${userId}/${meetingId}/decline`, { method: 'POST' });
-  },
+    }),
+  getMe: () => apiCall('/meeting/me', { method: 'GET' }),
+  accept: (meetingId: string) => apiCall(`/meeting/${meetingId}/accept`, { method: 'POST' }),
+  decline: (meetingId: string) => apiCall(`/meeting/${meetingId}/decline`, { method: 'POST' }),
 };
