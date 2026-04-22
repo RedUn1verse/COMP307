@@ -1,4 +1,4 @@
-import { slots, meetings } from './api';
+import { slots, meetings, proposals } from './api';
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
@@ -27,7 +27,11 @@ document.addEventListener('click', (e) => {
     }
     
     if (target.classList.contains('new-group-appointment-btn')) {
-        openNewMeetingModal();
+        openNewProposalModal();
+    }
+
+    if (target.classList.contains('new-recurring-oh-btn')) {
+        openNewRecurringModal();
     }
 
     // Tab switching
@@ -51,6 +55,13 @@ document.addEventListener('click', (e) => {
     if (target.classList.contains('decline-meeting-btn')) {
         const meetingId = target.getAttribute('data-meeting-id');
         if (meetingId) declineMeeting(meetingId, target);
+    }
+
+    // Select option button from group proposal
+    if (target.classList.contains('select-option-btn')) {
+        const proposalId = target.getAttribute('data-proposal-id');
+        const optionId = target.getAttribute('data-option-id');
+        if (proposalId && optionId) selectProposalOption(proposalId, optionId, target);
     }
 
     // Delete slot button
@@ -97,35 +108,41 @@ async function showDashboardView() {
                 <h1 class="page-title">Welcome, Dr. Alberini</h1>
                 <p class="page-description">Manage your appointments and availability.</p>
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button class="card-action-button new-private-slot-btn" style="width: auto;">+ Private Slot</button>
-                <button class="card-action-button new-group-appointment-btn" style="width: auto;">+ Group Meeting</button>
+                <button class="card-action-button new-group-appointment-btn" style="width: auto;">+ Group Poll</button>
+                <button class="card-action-button new-recurring-oh-btn" style="width: auto;">+ Recurring OH</button>
             </div>
         </header>
 
-        <div class="dashboard-tabs" style="display: flex; gap: 20px; margin: 20px 0; border-bottom: 2px solid #e0e0e0; padding: 0 20px;">
-            <button class="tab-btn active" data-tab="private" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--mcgill-red); border-bottom: 3px solid var(--mcgill-red); font-weight: 600;">Private Appointments</button>
-            <button class="tab-btn" data-tab="group" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: #666;">Group Appointments</button>
-            <button class="tab-btn" data-tab="calendar" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: #666;">Calendar View</button>
+        <div class="dashboard-tabs" style="display: flex; gap: 20px; margin: 20px 0; border-bottom: 2px solid #e0e0e0; padding: 0 20px; flex-wrap: wrap;">
+            <button class="tab-btn active" data-tab="private" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--mcgill-red); border-bottom: 3px solid var(--mcgill-red); font-weight: 600;">Private Slots</button>
+            <button class="tab-btn" data-tab="requests" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: #666;">Meeting Requests</button>
+            <button class="tab-btn" data-tab="group" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: #666;">Group Polls</button>
+            <button class="tab-btn" data-tab="recurring" style="padding: 10px 0; background: none; border: none; font-size: 1rem; cursor: pointer; color: #666;">Recurring OH</button>
         </div>
 
         <div class="tab-content-container" style="padding: 20px;">
             <div id="private-tab" class="tab-content active" style="display: block;">
-                <div style="text-align: center; padding: 40px; color: #999;">Loading private appointments...</div>
+                <div style="text-align: center; padding: 40px; color: #999;">Loading private slots...</div>
+            </div>
+            <div id="requests-tab" class="tab-content" style="display: none;">
+                <div style="text-align: center; padding: 40px; color: #999;">Loading meeting requests...</div>
             </div>
             <div id="group-tab" class="tab-content" style="display: none;">
-                <div style="text-align: center; padding: 40px; color: #999;">Loading group appointments...</div>
+                <div style="text-align: center; padding: 40px; color: #999;">Loading group polls...</div>
             </div>
-            <div id="calendar-tab" class="tab-content" style="display: none;">
-                <div style="text-align: center; padding: 40px; color: #999;">Loading calendar view...</div>
+            <div id="recurring-tab" class="tab-content" style="display: none;">
+                <div style="text-align: center; padding: 40px; color: #999;">Loading recurring office hours...</div>
             </div>
         </div>
     `;
 
     // Load data for all tabs
     await loadPrivateAppointments();
-    await loadGroupAppointments();
-    await loadCalendarView();
+    await loadMeetingRequests();
+    await loadGroupProposals();
+    await loadRecurringView();
 }
 
 // Load Private Appointments
@@ -189,20 +206,20 @@ async function loadPrivateAppointments() {
     }
 }
 
-// Load Group Appointments (Meeting Requests)
-async function loadGroupAppointments() {
-    const groupTab = document.getElementById('group-tab');
-    if (!groupTab) return;
+// Load Meeting Requests
+async function loadMeetingRequests() {
+    const requestsTab = document.getElementById('requests-tab');
+    if (!requestsTab) return;
 
     try {
         const data = await meetings.getMe();
         const meetingsList = Array.isArray(data) ? data : data.meetings || [];
 
         if (meetingsList.length === 0) {
-            groupTab.innerHTML = `
+            requestsTab.innerHTML = `
                 <div style="text-align: center; padding: 40px; color: #999;">
-                    <p>No group appointment requests yet.</p>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">Students can send you group meeting requests.</p>
+                    <p>No meeting requests yet.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Students can send you direct office hour requests here.</p>
                 </div>
             `;
             return;
@@ -216,7 +233,7 @@ async function loadGroupAppointments() {
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
                         <div>
                             <h3 style="margin: 0 0 5px 0; color: var(--mcgill-red);">${meeting.title || 'Meeting Request'}</h3>
-                            <p style="margin: 0; font-size: 0.9rem; color: #666;">From: ${meeting.requesterName || 'Unknown'}</p>
+                            <p style="margin: 0; font-size: 0.9rem; color: #666;">From: ${meeting.userName || 'Unknown'}</p>
                         </div>
                         <span style="background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">
                             PENDING
@@ -235,43 +252,96 @@ async function loadGroupAppointments() {
         }
 
         html += '</div>';
-        groupTab.innerHTML = html;
+        requestsTab.innerHTML = html;
     } catch (error) {
-        console.error('Failed to load group appointments:', error);
-        groupTab.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">Error loading appointments. Please try again.</div>`;
+        console.error('Failed to load meeting requests:', error);
+        requestsTab.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">Error loading meeting requests. Please try again.</div>`;
     }
 }
 
-// Load Calendar View
-async function loadCalendarView() {
-    const calendarTab = document.getElementById('calendar-tab');
-    if (!calendarTab) return;
+// Load Group Polls
+async function loadGroupProposals() {
+    const groupTab = document.getElementById('group-tab');
+    if (!groupTab) return;
+
+    try {
+        const proposalsData = await proposals.getOwned();
+        const proposalsList = Array.isArray(proposalsData) ? proposalsData : [];
+
+        if (proposalsList.length === 0) {
+            groupTab.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <p>No group polls created yet.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Create a group poll to let students vote on the best office hour option.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">';
+
+        for (const proposal of proposalsList) {
+            html += `
+                <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin: 0 0 10px 0; color: var(--mcgill-red);">${proposal.title}</h3>
+                    <p style="margin: 0 0 10px 0; font-size: 0.9rem; color: #666;"><strong>Invited:</strong> ${proposal.invitedUsers?.join(', ') || 'No students'}</p>
+                    <div style="display: grid; gap: 12px; margin-top: 10px;">
+            `;
+
+            for (const option of proposal.options) {
+                html += `
+                    <div style="background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                            <div>
+                                <p style="margin: 0 0 6px 0; font-weight: 600;">${option.date} ${option.startTime} - ${option.endTime}</p>
+                                <p style="margin: 0; font-size: 0.85rem; color: #666;">Votes: ${option.voteCount}</p>
+                            </div>
+                            <button class="select-option-btn" data-proposal-id="${proposal.proposalId}" data-option-id="${option.optionId}" style="padding: 8px 12px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Select</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div></div>';
+        }
+
+        html += '</div>';
+        groupTab.innerHTML = html;
+    } catch (error) {
+        console.error('Failed to load group polls:', error);
+        groupTab.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">Error loading group polls. Please try again.</div>`;
+    }
+}
+
+// Load Recurring OH View
+async function loadRecurringView() {
+    const recurringTab = document.getElementById('recurring-tab');
+    if (!recurringTab) return;
 
     try {
         const slotData = await slots.getOwned();
         const slotsList = Array.isArray(slotData) ? slotData : slotData.slots || [];
+        const activeSlots = slotsList.filter((slot: any) => !slot.isPrivate);
 
-        // Group slots by date
+        if (activeSlots.length === 0) {
+            recurringTab.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    <p>No recurring office hours are currently active.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Create a recurring OH slot to make it available to students immediately.</p>
+                </div>
+            `;
+            return;
+        }
+
         const slotsByDate: { [key: string]: any[] } = {};
-        for (const slot of slotsList) {
+        for (const slot of activeSlots) {
             if (!slotsByDate[slot.date]) {
                 slotsByDate[slot.date] = [];
             }
             slotsByDate[slot.date].push(slot);
         }
 
-        // Sort dates
         const sortedDates = Object.keys(slotsByDate).sort();
-
-        if (sortedDates.length === 0) {
-            calendarTab.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #999;">
-                    <p>No appointments scheduled yet.</p>
-                </div>
-            `;
-            return;
-        }
-
         let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
 
         for (const date of sortedDates) {
@@ -302,11 +372,21 @@ async function loadCalendarView() {
         }
 
         html += '</div>';
-        calendarTab.innerHTML = html;
+        recurringTab.innerHTML = html;
     } catch (error) {
-        console.error('Failed to load calendar view:', error);
-        calendarTab.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">Error loading calendar. Please try again.</div>`;
+        console.error('Failed to load recurring office hours view:', error);
+        recurringTab.innerHTML = `<div style="text-align: center; padding: 40px; color: #d32f2f;">Error loading recurring office hours. Please try again.</div>`;
     }
+}
+
+// Helper reload methods
+async function loadCalendarView() {
+    await loadPrivateAppointments();
+}
+
+async function loadGroupAppointments() {
+    await loadMeetingRequests();
+    await loadGroupProposals();
 }
 
 // Tab Switching
@@ -547,20 +627,146 @@ function openNewSlotModal() {
     });
 }
 
-// New Group Meeting Modal
-function openNewMeetingModal() {
-    /*
-    * This function creates and displays a modal for proposing a new group meeting. 
-    * It includes form fields for the meeting title, recipient email, date, start time, end time, and an optional message. 
-    * The modal also has "Send Request" and "Cancel" buttons. When the form is submitted,
-    * it will call the handleMeetingCreation function to process the meeting request.
-    */ 
+// New Group Poll Modal
+function openNewProposalModal() {
     // Remove any existing modal
-    const existingModal = document.getElementById('meeting-modal');
+    const existingModal = document.getElementById('proposal-modal');
     if (existingModal) existingModal.remove();
 
     const modal = document.createElement('div');
-    modal.id = 'meeting-modal';
+    modal.id = 'proposal-modal';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5); display: flex;
+        align-items: center; justify-content: center; z-index: 1000;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: white; border-radius: 12px; padding: 30px;
+            max-width: 580px; width: 95%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-height: 90vh; overflow-y: auto;
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; font-size: 1.5rem;">Create Group Poll</h2>
+                <button id="close-proposal-modal" style="
+                    background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;
+                ">&times;</button>
+            </div>
+
+            <form id="proposal-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                    <label for="proposal-title" style="display: block; margin-bottom: 5px; font-weight: 500;">Poll Title</label>
+                    <input type="text" id="proposal-title" placeholder="e.g., Final Project Time" required style="
+                        width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                        box-sizing: border-box; font-family: inherit;
+                    ">
+                </div>
+
+                <div>
+                    <label for="proposal-invitees" style="display: block; margin-bottom: 5px; font-weight: 500;">Invite Students</label>
+                    <textarea id="proposal-invitees" placeholder="Enter student names separated by commas or new lines" required style="
+                        width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                        box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 80px;
+                    "></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="proposal-option-1-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Option 1 Date</label>
+                        <input type="date" id="proposal-option-1-date" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div>
+                        <label for="proposal-option-1-start" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
+                        <input type="time" id="proposal-option-1-start" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="proposal-option-1-end" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
+                        <input type="time" id="proposal-option-1-end" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div></div>
+                </div>
+
+                <div style="border-top: 1px solid #eee; padding-top: 10px;">
+                    <div style="margin-bottom: 10px; font-weight: 600;">Optional second option</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label for="proposal-option-2-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Option 2 Date</label>
+                            <input type="date" id="proposal-option-2-date" style="
+                                width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                                box-sizing: border-box;
+                            ">
+                        </div>
+                        <div>
+                            <label for="proposal-option-2-start" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
+                            <input type="time" id="proposal-option-2-start" style="
+                                width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                                box-sizing: border-box;
+                            ">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label for="proposal-option-2-end" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
+                            <input type="time" id="proposal-option-2-end" style="
+                                width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                                box-sizing: border-box;
+                            ">
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" style="
+                        flex: 1; padding: 12px; background: var(--mcgill-red); color: white; border: none;
+                        border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 500;
+                    ">Create Poll</button>
+                    <button type="button" id="cancel-proposal" style="
+                        flex: 1; padding: 12px; background: #e0e0e0; color: #333; border: none;
+                        border-radius: 6px; font-size: 1rem; cursor: pointer;
+                    ">Cancel</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const closeBtn = modal.querySelector('#close-proposal-modal') as HTMLElement;
+    const cancelBtn = modal.querySelector('#cancel-proposal') as HTMLElement;
+    const form = modal.querySelector('#proposal-form') as HTMLFormElement;
+
+    closeBtn?.addEventListener('click', () => modal.remove());
+    cancelBtn?.addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await handleProposalCreation(form, modal);
+    });
+}
+
+function openNewRecurringModal() {
+    const existingModal = document.getElementById('recurring-modal');
+    if (existingModal) existingModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'recurring-modal';
     modal.style.cssText = `
         position: fixed; top: 0; left: 0; right: 0; bottom: 0;
         background: rgba(0, 0, 0, 0.5); display: flex;
@@ -574,32 +780,24 @@ function openNewMeetingModal() {
             max-height: 90vh; overflow-y: auto;
         ">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; font-size: 1.5rem;">Propose Group Meeting</h2>
-                <button id="close-meeting-modal" style="
+                <h2 style="margin: 0; font-size: 1.5rem;">Create Recurring OH Slot</h2>
+                <button id="close-recurring-modal" style="
                     background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;
                 ">&times;</button>
             </div>
 
-            <form id="meeting-form" style="display: flex; flex-direction: column; gap: 15px;">
+            <form id="recurring-form" style="display: flex; flex-direction: column; gap: 15px;">
                 <div>
-                    <label for="meeting-title" style="display: block; margin-bottom: 5px; font-weight: 500;">Meeting Title</label>
-                    <input type="text" id="meeting-title" placeholder="e.g., Group Project Discussion" required style="
+                    <label for="recurring-title" style="display: block; margin-bottom: 5px; font-weight: 500;">Title</label>
+                    <input type="text" id="recurring-title" placeholder="e.g., Weekly Office Hours" required style="
                         width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
                         box-sizing: border-box; font-family: inherit;
                     ">
                 </div>
 
                 <div>
-                    <label for="meeting-email" style="display: block; margin-bottom: 5px; font-weight: 500;">Recipient Email</label>
-                    <input type="email" id="meeting-email" placeholder="e.g., carol@mcgill.ca" required style="
-                        width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
-                        box-sizing: border-box; font-family: inherit;
-                    ">
-                </div>
-
-                <div>
-                    <label for="meeting-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Date</label>
-                    <input type="date" id="meeting-date" required style="
+                    <label for="recurring-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Date</label>
+                    <input type="date" id="recurring-date" required style="
                         width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
                         box-sizing: border-box;
                     ">
@@ -607,15 +805,15 @@ function openNewMeetingModal() {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <label for="meeting-start-time" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
-                        <input type="time" id="meeting-start-time" required style="
+                        <label for="recurring-start-time" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
+                        <input type="time" id="recurring-start-time" required style="
                             width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
                             box-sizing: border-box;
                         ">
                     </div>
                     <div>
-                        <label for="meeting-end-time" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
-                        <input type="time" id="meeting-end-time" required style="
+                        <label for="recurring-end-time" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
+                        <input type="time" id="recurring-end-time" required style="
                             width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
                             box-sizing: border-box;
                         ">
@@ -623,19 +821,22 @@ function openNewMeetingModal() {
                 </div>
 
                 <div>
-                    <label for="meeting-message" style="display: block; margin-bottom: 5px; font-weight: 500;">Message</label>
-                    <textarea id="meeting-message" placeholder="Describe the purpose of the meeting..." style="
+                    <label for="recurring-frequency" style="display: block; margin-bottom: 5px; font-weight: 500;">Frequency</label>
+                    <select id="recurring-frequency" style="
                         width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
-                        box-sizing: border-box; font-family: inherit; resize: vertical; min-height: 80px;
-                    "></textarea>
+                        box-sizing: border-box; font-family: inherit;
+                    ">
+                        <option value="single">Single public slot</option>
+                        <option value="weekly">Weekly</option>
+                    </select>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" style="
                         flex: 1; padding: 12px; background: var(--mcgill-red); color: white; border: none;
                         border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 500;
-                    ">Send Request</button>
-                    <button type="button" id="cancel-meeting" style="
+                    ">Create Recurring OH</button>
+                    <button type="button" id="cancel-recurring" style="
                         flex: 1; padding: 12px; background: #e0e0e0; color: #333; border: none;
                         border-radius: 6px; font-size: 1rem; cursor: pointer;
                     ">Cancel</button>
@@ -646,9 +847,9 @@ function openNewMeetingModal() {
 
     document.body.appendChild(modal);
 
-    const closeBtn = modal.querySelector('#close-meeting-modal') as HTMLElement;
-    const cancelBtn = modal.querySelector('#cancel-meeting') as HTMLElement;
-    const form = modal.querySelector('#meeting-form') as HTMLFormElement;
+    const closeBtn = modal.querySelector('#close-recurring-modal') as HTMLElement;
+    const cancelBtn = modal.querySelector('#cancel-recurring') as HTMLElement;
+    const form = modal.querySelector('#recurring-form') as HTMLFormElement;
 
     closeBtn?.addEventListener('click', () => modal.remove());
     cancelBtn?.addEventListener('click', () => modal.remove());
@@ -658,14 +859,11 @@ function openNewMeetingModal() {
 
     form?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        await handleMeetingCreation(form, modal);
+        await handleRecurringCreation(form, modal);
     });
 }
 
 async function handleSlotCreation(form: HTMLFormElement, modal: HTMLElement) {
-    /*
-    * Validate form inputs, then call API to create slot. On success, close modal and refresh private appointments and calendar view.
-    */
     const title = (form.querySelector('#slot-title') as HTMLInputElement).value;
     const date = (form.querySelector('#slot-date') as HTMLInputElement).value;
     const startTime = (form.querySelector('#slot-start-time') as HTMLInputElement).value;
@@ -696,9 +894,8 @@ async function handleSlotCreation(form: HTMLFormElement, modal: HTMLElement) {
         alert(`Private slot "${title}" created successfully!`);
         modal.remove();
         
-        // Reload private appointments
         await loadPrivateAppointments();
-        await loadCalendarView();
+        await loadRecurringView();
     } catch (error) {
         console.error('Slot creation failed:', error);
         alert('Failed to create slot. Please try again.');
@@ -708,16 +905,14 @@ async function handleSlotCreation(form: HTMLFormElement, modal: HTMLElement) {
     }
 }
 
-// Handle Meeting Creation
-async function handleMeetingCreation(form: HTMLFormElement, modal: HTMLElement) {
-    const title = (form.querySelector('#meeting-title') as HTMLInputElement).value;
-    const ownerEmail = (form.querySelector('#meeting-email') as HTMLInputElement).value;
-    const date = (form.querySelector('#meeting-date') as HTMLInputElement).value;
-    const startTime = (form.querySelector('#meeting-start-time') as HTMLInputElement).value;
-    const endTime = (form.querySelector('#meeting-end-time') as HTMLInputElement).value;
-    const message = (form.querySelector('#meeting-message') as HTMLTextAreaElement).value;
+async function handleRecurringCreation(form: HTMLFormElement, modal: HTMLElement) {
+    const title = (form.querySelector('#recurring-title') as HTMLInputElement).value;
+    const date = (form.querySelector('#recurring-date') as HTMLInputElement).value;
+    const startTime = (form.querySelector('#recurring-start-time') as HTMLInputElement).value;
+    const endTime = (form.querySelector('#recurring-end-time') as HTMLInputElement).value;
+    const frequency = (form.querySelector('#recurring-frequency') as HTMLSelectElement).value;
 
-    if (!title || !ownerEmail || !date || !startTime || !endTime) {
+    if (!title || !date || !startTime || !endTime) {
         alert('Please fill in all required fields');
         return;
     }
@@ -730,28 +925,98 @@ async function handleMeetingCreation(form: HTMLFormElement, modal: HTMLElement) 
     try {
         const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
+        submitBtn.textContent = 'Creating...';
 
-        await meetings.create({
+        const slot = await slots.create({
             title,
-            ownerEmail,
             date,
             startTime,
-            endTime,
-            message
+            endTime
         });
 
-        alert('Meeting request sent successfully!');
+        await slots.activate(slot.slotId);
+
+        const recurrenceLabel = frequency === 'weekly' ? 'Weekly' : 'Single';
+        alert(`${recurrenceLabel} recurring OH "${title}" created and published successfully!`);
         modal.remove();
-        
-        // Reload group appointments
-        await loadGroupAppointments();
+        await loadPrivateAppointments();
+        await loadRecurringView();
     } catch (error) {
-        console.error('Meeting creation failed:', error);
-        alert('Failed to send meeting request. Please try again.');
+        console.error('Recurring slot creation failed:', error);
+        alert('Failed to create recurring OH. Please try again.');
         const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Send Request';
+        submitBtn.textContent = 'Create Recurring OH';
+    }
+}
+
+async function handleProposalCreation(form: HTMLFormElement, modal: HTMLElement) {
+    const title = (form.querySelector('#proposal-title') as HTMLInputElement).value;
+    const inviteesRaw = (form.querySelector('#proposal-invitees') as HTMLTextAreaElement).value;
+    const option1Date = (form.querySelector('#proposal-option-1-date') as HTMLInputElement).value;
+    const option1Start = (form.querySelector('#proposal-option-1-start') as HTMLInputElement).value;
+    const option1End = (form.querySelector('#proposal-option-1-end') as HTMLInputElement).value;
+    const option2Date = (form.querySelector('#proposal-option-2-date') as HTMLInputElement).value;
+    const option2Start = (form.querySelector('#proposal-option-2-start') as HTMLInputElement).value;
+    const option2End = (form.querySelector('#proposal-option-2-end') as HTMLInputElement).value;
+
+    const invitees = inviteesRaw
+        .split(/[,\n]/)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+    const options = [] as Array<{ date: string; startTime: string; endTime: string }>;
+    if (option1Date && option1Start && option1End) {
+        options.push({ date: option1Date, startTime: option1Start, endTime: option1End });
+    }
+    if (option2Date && option2Start && option2End) {
+        options.push({ date: option2Date, startTime: option2Start, endTime: option2End });
+    }
+
+    if (!title || invitees.length === 0 || options.length === 0) {
+        alert('Please provide a title, at least one student, and at least one option.');
+        return;
+    }
+
+    try {
+        const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+
+        await proposals.create({
+            title,
+            userNames: invitees,
+            options,
+        });
+
+        alert('Group poll created successfully!');
+        modal.remove();
+        await loadGroupProposals();
+    } catch (error) {
+        console.error('Proposal creation failed:', error);
+        alert('Failed to create group poll. Please try again.');
+        const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Poll';
+    }
+}
+
+async function selectProposalOption(proposalId: string, optionId: string, button: HTMLElement) {
+    try {
+        const btn = button as HTMLButtonElement;
+        btn.disabled = true;
+        btn.textContent = 'Selecting...';
+
+        await proposals.select(proposalId, optionId);
+
+        alert('Option selected successfully!');
+        await loadGroupProposals();
+    } catch (error) {
+        console.error('Failed to select proposal option:', error);
+        alert('Failed to select option. Please try again.');
+        const btn = button as HTMLButtonElement;
+        btn.disabled = false;
+        btn.textContent = 'Select';
     }
 }
 

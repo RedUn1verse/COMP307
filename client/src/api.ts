@@ -135,3 +135,18 @@ export const meetings = {
   accept: (meetingId: string) => apiCall(`/meeting/${meetingId}/accept`, { method: 'POST' }),
   decline: (meetingId: string) => apiCall(`/meeting/${meetingId}/decline`, { method: 'POST' }),
 };
+
+// Proposal Endpoints
+export const proposals = {
+  getOwned: () => apiCall('/proposal/owned', { method: 'GET' }),
+  create: (data: any) =>
+    apiCall('/proposal/create', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  select: (proposalId: string, optionId: string) =>
+    apiCall(`/proposal/${proposalId}/select`, {
+      method: 'POST',
+      body: JSON.stringify({ optionId }),
+    }),
+};
