@@ -3,7 +3,7 @@
  * Self-contained implementation with its own modal and button handlers
  */
 
-import { apiCall } from './api';
+import { meetings, bookings } from './api';
 
 // --- Interfaces ---
 
@@ -116,6 +116,14 @@ function openBookingModal(professorName: string) {
         </div>
 
         <div>
+          <label for="booking-title" style="display: block; margin-bottom: 5px; font-weight: 500;">Title</label>
+          <input type="text" id="booking-title" required placeholder="e.g., Discuss project proposal" style="
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+            box-sizing: border-box;
+          ">
+        </div>
+
+        <div>
           <label for="booking-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Date</label>
           <input type="date" id="booking-date" required style="
             width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
@@ -123,12 +131,21 @@ function openBookingModal(professorName: string) {
           ">
         </div>
 
-        <div>
-          <label for="booking-time" style="display: block; margin-bottom: 5px; font-weight: 500;">Time</label>
-          <input type="time" id="booking-time" required style="
-            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
-            box-sizing: border-box;
-          ">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label for="booking-start-time" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
+            <input type="time" id="booking-start-time" required style="
+              width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+              box-sizing: border-box;
+            ">
+          </div>
+          <div>
+            <label for="booking-end-time" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
+            <input type="time" id="booking-end-time" required style="
+              width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+              box-sizing: border-box;
+            ">
+          </div>
         </div>
 
         <div>
@@ -168,35 +185,33 @@ function openBookingModal(professorName: string) {
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await handleBookingSubmit(form, professorName, modal);
+    await handleBookingSubmit(form, modal);
   });
 }
 
-async function handleBookingSubmit(form: HTMLFormElement, professorName: string, modal: HTMLElement) {
+async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
+  const title = (form.querySelector('#booking-title') as HTMLInputElement).value;
   const date = (form.querySelector('#booking-date') as HTMLInputElement).value;
-  const time = (form.querySelector('#booking-time') as HTMLInputElement).value;
+  const startTime = (form.querySelector('#booking-start-time') as HTMLInputElement).value;
+  const endTime = (form.querySelector('#booking-end-time') as HTMLInputElement).value;
   const notes = (form.querySelector('#booking-notes') as HTMLTextAreaElement).value;
 
-  if (!date || !time) {
+  if (!title || !date || !startTime || !endTime) {
     alert('Please fill in all required fields');
     return;
   }
 
   try {
     const bookingData = {
-	     userId: localStorage.getItem('userId') || 'u1',
-	     ownerId: professorName,
-	     message: notes,
-	     title: 'Office Hours (test)',
-	     date: date,
-	     startTime: time,
-	     endTime: time,
+      ownerEmail: 'carol@example.com',
+      title,
+      message: notes || 'Office hours booking',
+      date,
+      startTime,
+      endTime,
     };
 
-    await apiCall('/meeting/create', {
-      method: 'POST',
-      body: JSON.stringify(bookingData),
-    });
+    await meetings.create(bookingData);
 
     alert('Appointment booked successfully!');
     modal.remove();
@@ -310,7 +325,7 @@ async function showMyAppointmentsView() {
   `;
 
   try {
-    const appointments: Appointment[] = await apiCall(`/booking/${localStorage.getItem('userId')}`, { method: 'GET'});
+    const appointments: Appointment[] = await bookings.getMyBookings();
 
     const container = document.getElementById('appointments-container')!;
 

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TBD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="background-color: var(--light-grey); justify-content: center; align-items: center;">
+    <main class="centered-card-content">
+        <div class="form-card">
+            <div class="sidebar-logo-placeholder" style="margin: 0 auto 15px auto;">M</div>
+            <h1 class="page-title" style="margin-bottom: 5px;">NameTBD</h1>
+            <p class="page-description" style="margin-bottom: 25px;">SOCS Booking Application</p>
+            
+            <p style="font-size: 0.9rem; color: var(--medium-grey); margin-bottom: 25px; text-align: left;">
+                Create a new account to get started with our office hours booking system.
+            </p>
+
+            <form id="register-form">
+                <div style="text-align: left; margin-bottom: 15px;">
+                    <label for="name" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">Full Name</label>
+                    <input type="text" id="name" class="search-input" style="padding-left: 15px; background-color: white;" placeholder="e.g., Alice Smith" required>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 15px;">
+                    <label for="email" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">McGill Email</label>
+                    <input type="email" id="email" class="search-input" style="padding-left: 15px; background-color: white;" placeholder="name@mail.mcgill.ca or name@mcgill.ca" pattern=".+@.*mcgill\.ca" required>
+                </div>
+
+                <div style="text-align: left; margin-bottom: 15px;">
+                    <label for="job" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">Role</label>
+                    <select id="job" class="search-input" style="padding-left: 15px; background-color: white;" required>
+                        <option value="">-- Select your role --</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher / Professor</option>
+                        <option value="ta">Teaching Assistant</option>
+                    </select>
+                </div>
+                
+                <div style="text-align: left; margin-bottom: 25px;">
+                    <label for="password" style="display: block; font-size: 0.8rem; margin-bottom: 5px; font-weight: 500;">Password</label>
+                    <input type="password" id="password" class="search-input" style="padding-left: 15px; background-color: white;" placeholder="Min 5 characters" minlength="5" required>
+                </div>
+
+                <div id="error-message" style="display: none; background-color: #ffebee; color: #c62828; padding: 12px; border-radius: 4px; margin-bottom: 15px; font-size: 0.9rem; text-align: left;"></div>
+
+                <button type="submit" class="card-action-button" style="margin-bottom: 15px;">Create Account</button>
+            </form>
+
+            <div style="font-size: 0.8rem; color: var(--medium-grey);">
+                Already have an account? <a href="/signin.html" style="color: var(--mcgill-red); text-decoration: none;">Log In</a>
+            </div>
+            
+            <div style="margin-top: 30px; border-top: 1px solid #eaeaea; padding-top: 20px; text-align: left;">
+                <h3 style="font-size: 0.9rem; font-weight: 500;">Account Types</h3>
+                <ul style="font-size: 0.8rem; color: var(--dark-grey); line-height: 1.4;">
+                    <li><strong>@mail.mcgill.ca</strong> (Students): Can book office hour slots.</li>
+                    <li><strong>@mcgill.ca</strong> (Staff/Faculty): Can create and manage office hour slots.</li>
+                    <li>Choose your role to help us set up your account correctly.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('register-form');
+        const errorDiv = document.getElementById('error-message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const job = document.getElementById('job').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!name || !email || !job || !password) {
+                showError('Please fill in all fields');
+                return;
+            }
+
+            if (password.length < 5) {
+                showError('Password must be at least 5 characters');
+                return;
+            }
+
+            if (!email.endsWith('@mcgill.ca') && !email.endsWith('@mail.mcgill.ca')) {
+                showError('Email must be a valid @mcgill.ca or @mail.mcgill.ca address');
+                return;
+            }
+
+            try {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating account...';
+
+                const response = await fetch('/user/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        job,
+                        password,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    if (data.error) {
+                        showError(data.error);
+                    } else if (data.errors && Array.isArray(data.errors)) {
+                        showError(data.errors.join(', '));
+                    } else {
+                        showError('Registration failed. Please try again.');
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                    return;
+                }
+
+                // Success
+                alert('Account created successfully! Redirecting to login...');
+                window.location.href = '/signin.html';
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError('An error occurred. Please try again.');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+
+        function showError(message) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
