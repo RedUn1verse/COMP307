@@ -4,6 +4,17 @@ const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toStrin
 const UserModel = require('./usermodel');
 const SlotModel = require('./slotmodel');
 const BookingModel = require('./bookingmodel');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+
+
+function addDays(dateStr, days) {
+  const d = dayjs(dateStr, 'YYYY-MM-DD', true);
+  if (!d.isValid()) return null;
+  return d.add(days, 'day').format('YYYY-MM-DD');
+}
 
 const ProposalModel = {
 
@@ -63,6 +74,41 @@ const ProposalModel = {
     await ProposalModel.delete(proposalId);
     return proposal;
   },
+
+  async selectR(proposalId, optionId, recurrence = 1) {
+
+    const proposal = await ProposalModel.findById(proposalId);
+    if (!proposal) return null;
+    const option = proposal.options.find(o => o.optionId === optionId);
+    if (!option) return null;
+
+    const dates = [];
+    for (let i = 0; i < recurrence; i++) {
+      const d = addDays(option.date, i * 7);
+      if (!d) return null;
+      dates.push(d);
+    }
+
+    const slots = [];
+    for (const date of dates) {
+      const slot = await SlotModel.create(
+        proposal.ownerId,
+        date,
+        option.startTime,
+        option.endTime,
+        proposal.title,
+      );
+      await Promise.all(proposal.userIds.map(uid =>
+        BookingModel.create(uid, proposal.ownerId, slot.slotId)
+      ));
+      slots.push(slot);
+    }
+    console.log(slots)
+    await ProposalModel.delete(proposalId);
+    return { ...proposal, slots };
+  },
+
+
 
   async vote(proposalId, userId, optionIds) {
     const db = getDB();

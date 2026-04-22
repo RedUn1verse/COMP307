@@ -59,7 +59,7 @@ const UserController = {
     return res.status(201).json(UserDto.responseUser(user));
 
   },
-  
+
   async login(req, res){
     const userEmail = req.body.email
     const userPwd = req.body.pwd
@@ -72,6 +72,8 @@ const UserController = {
     }
     
     const user = await UserModel.findByEmail(userEmail)
+
+    if (!user) return res.status(404).json("This email does not exist");
 
     if(user.pwd !== userPwd) return res.status(401).json("Invalid Credentials")
     

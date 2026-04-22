@@ -76,6 +76,49 @@ router.get('/:userId/owned', ProposalController.getOwnerProposals);
  */
 router.post('/:userId/create', ProposalController.create);
 
+router.post('/test/:proposalId', ProposalController.test)
+
+/**
+ * @swagger
+ * proposal/{userId}/{proposalId}/selectR:
+ *   post:
+ *     summary: Owner selects the option they want to book
+ *     description: Closes the proposal, creates a new booking for all invited users and sends the owner a notificaton
+ *     tags: [Proposals]
+ *     parameters:
+ *       - in: path
+ *         name: proposalId
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema: { $ref: '#/components/schemas/ProposalSelectRRequest' }
+ *     responses:
+ *       200:
+ *         description: Proposal closed and bookings created for invited users. Returns a 'url' mailto to send the owner a notification to themselves
+ *         content:
+ *           application/json:
+ *             schema:
+ *              type: object
+ *              properties:
+ *                  url:
+ *                      type: string
+ *                      format: uri
+ *                      example:  "mailto:carol@mcgill.ca?subject=New+meeting+request+from+Alice+Smith&body=..."
+ *       403:
+ *         description: Forbidden – only the proposal's owner may select
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ *       404:
+ *         description: Proposal not found
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/Error' }
+ */
+router.post('/:userId/:proposalId/selectR', ProposalController.selectR)
 
 /**
  * @swagger
@@ -118,7 +161,6 @@ router.post('/:userId/create', ProposalController.create);
  *             schema: { $ref: '#/components/schemas/Error' }
  */
 router.post('/:userId/:proposalId/select', ProposalController.select);
-
 
 /**
  * @swagger
@@ -235,6 +277,18 @@ router.post('/:userId/:proposalId/vote', ProposalController.vote);
  *         optionId:
  *           type: string
  *           example: "p1-opt-a"
+ * 
+ *     ProposalSelectRRequest:
+ *       type: object
+ *       required: [optionId, reccurence]
+ *       properties:
+ *         optionId:
+ *           type: string
+ *           example: "p1-opt-a"
+ *         reccurence:
+ *           type: string
+ *           description: Must be a number equal or bigger
+ *           example: "1"
  * 
  *     ProposalVoteRequest:
  *       type: object

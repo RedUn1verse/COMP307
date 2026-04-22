@@ -11,6 +11,32 @@ const findUserByName = (name)  => db.users.find(u => u.name?.toLowerCase() === n
 
 
 const ProposalController = {
+
+    async test(req, res){
+
+        const { optionId, reccurence } = req.body ?? {};
+        if (!optionId) return res.status(400).json({ error: 'optionId required' });
+
+        const recurrence = reccurence ?? 1;
+        if (!Number.isInteger(recurrence) || recurrence < 1) {
+            return res.status(400).json({ error: 'reccurence must be a positive integer' });
+        }
+
+        p = await ProposalModel.findById(req.params.proposalId);
+        date = p.options[0].date
+        console.log(date)
+        const dates = [];
+
+        for (let i = 0; i < recurrence; i++) {
+            
+            const d = addDays(date, i * 7);
+            console.log(d)
+            if (!d) return null;
+            dates.push(d);
+        }
+
+        return res.json("done")
+    },
     
     async getUserProposals(req, res) {
         const userId = req.params.userId;
@@ -61,7 +87,42 @@ const ProposalController = {
         const proposal = await ProposalModel.create(ownerId, title.trim(), userIds, options);
         res.status(201).json(ProposalDto.responseForOwner(proposal));
     },
+    
+    async selectR(req, res) {
+        const { optionId, reccurence } = req.body ?? {};
+        if (!optionId) return res.status(400).json({ error: 'optionId required' });
 
+        const recurrence = reccurence ?? 1;
+        if (!Number.isInteger(recurrence) || recurrence < 1) {
+            return res.status(400).json({ error: 'reccurence must be a positive integer' });
+        }
+
+        const p = await ProposalModel.findById(req.params.proposalId);
+        if (!p) return res.status(404).json({ error: 'Proposal not found' });
+        if (p.ownerId !== req.params.userId) return res.status(403).json({ error: 'Only the owner can select' });
+
+        const option = p.options.find(opt => opt.optionId === optionId);
+        if (!option) return res.status(400).json({ error: 'Invalid optionId' });
+
+        const accepted = await ProposalModel.selectR(p.proposalId, optionId, recurrence);
+        if (!accepted) return res.status(400).json({ error: 'Invalid date on selected option' });
+   
+        const owner = await UserModel.findById(p.ownerId);
+
+        const to = owner.email;
+        const subject = `New booking for ${p.title}`;
+        const lines = accepted.slots.map(s => `- ${s.date} from ${s.startTime} to ${s.endTime}`).join('\n');
+        const intro = accepted.slots.length > 1
+            ? `You have ${recurrence} recurring bookings for ${p.title}:`
+            : `You have a booking for ${accepted.title}:`;
+        const body = `${intro}\n${lines}\n\n`;
+
+        const url = EmailService.buildMailto(to, subject, body);
+
+        res.status(201).json({ url });
+    },
+
+    
     async select(req, res) {
         const { optionId } = req.body ?? {};
         if (!optionId) return res.status(400).json({ error: 'optionId required' });

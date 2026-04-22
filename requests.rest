@@ -55,7 +55,7 @@ POST {{baseUrl}}/meeting/u1/create
 Content-Type: application/json
 
 {
-  "ownerEmail": "carol@example.com",
+  "ownerEmail": "carol@mcgill.ca",
   "title": "TEST DEMO",
   "message": "Need to demo app",
   "date": "2026-06-20",
@@ -89,11 +89,11 @@ POST {{baseUrl}}/proposal/login
 GET {{baseUrl}}/proposal/o1/owned
 ###
 
-POST {{baseUrl}}/proposal/u1/create
+POST {{baseUrl}}/proposal/o1/create
 Content-Type: application/json
 
 {
-  "title": "770 Final",
+  "title": "300 Final",
   "userNames": [
     "Alice Smith",
     "Bob Jones",
@@ -200,6 +200,27 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "seb@mail.mcgill.ca",
-  "pwd": "123456"
+  "email": "alice@mail.mcgill.ca",
+  "pwd": "password123"
+}
+
+
+###
+@selectProposal = 5wkwx9fjmoammkpq
+POST {{baseUrl}}/proposal/o1/{{selectProposal}}/selectR
+Content-Type: application/json
+
+{
+  "optionId": "gsy4zcbemoammkpq",
+  "reccurence": 2
+}
+
+
+###
+POST {{baseUrl}}/proposal/test/
+Content-Type: application/json
+
+{
+  "optionId": "p2",
+  "reccurence": 2
 }
