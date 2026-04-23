@@ -7,15 +7,26 @@ import { meetings, bookings } from './api';
 
 // --- Interfaces ---
 
+// interface Appointment {
+//   _id: string;
+//   studentId: string;
+//   slotId: string;
+//   professorName: string;
+//   date: string;
+//   startTime: string;
+//   endTime: string;
+//   status: string;
+// }
+
 interface Appointment {
-  _id: string;
-  studentId: string;
-  slotId: string;
-  professorName: string;
+  bookingId: string;
+  title: string;
   date: string;
   startTime: string;
   endTime: string;
-  status: string;
+  ownerName: string;
+  ownerEmail: string;
+  ownerPublicId: string;
 }
 
 // --- Init ---
@@ -203,7 +214,7 @@ async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
 
   try {
     const bookingData = {
-      ownerEmail: 'carol@example.com',
+      ownerEmail: 'carol@mcgill.ca',
       title,
       message: notes || 'Office hours booking',
       date,
@@ -323,10 +334,10 @@ async function showMyAppointmentsView() {
       <p>Loading appointments...</p>
     </div>
   `;
-
+  console.log("hello");
   try {
     const appointments: Appointment[] = await bookings.getMyBookings();
-
+    
     const container = document.getElementById('appointments-container')!;
 
     if (appointments && appointments.length > 0) {
@@ -334,14 +345,16 @@ async function showMyAppointmentsView() {
       appointments.forEach((apt) => {
         html += `
           <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;">
-            <h3 style="margin:0 0 10px 0;">${apt.professorName}</h3>
+            <h3 style="margin:0 0 10px 0;">${apt.ownerName}</h3>
             <p style="margin:5px 0;"><strong>Date:</strong>
               ${new Date(apt.date).toLocaleDateString()}</p>
             <p style="margin:5px 0;"><strong>Time:</strong>
               ${apt.startTime} - ${apt.endTime}</p>
             <p style="margin:5px 0;"><strong>Status:</strong>
-              <span style="color:${apt.status === 'confirmed' ? 'green' : 'orange'};">
-                ${apt.status}
+              <span style="color:${'orange'};">
+                ${"confirmed"}
+              <p style="margin:5px 0;"><strong>Email:</strong>
+              <a href="mailto:${apt.ownerEmail}">${apt.ownerEmail}</a></p>
               </span>
             </p>
           </div>

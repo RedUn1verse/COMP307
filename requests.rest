@@ -128,13 +128,12 @@ Content-Type: application/json
   "optionId": "l5qsnw12mo9n00dx"
 }
 ###
-@voteProposalId = 71esxmnxmo95ecx9
-POST {{baseUrl}}/proposal/{{voteProposalId}}/vote
-Authorization: Bearer {{accessToken}}
+@voteProposalId = 71048adwmoapqajr
+POST {{baseUrl}}/proposal/u1/{{voteProposalId}}/vote
 Content-Type: application/json
 
 {
-  "optionIds": ["hgagz9hwmo95ecx9","pqtxo0p7mo95ecx9"]
+  "optionIds": ["4um10j82moapqajr","2i31vq5mmoapqajr"]
 }
 
 ###

@@ -129,7 +129,7 @@ router.post('/:userId/:meetingId/decline', meetingController.decline);
  *              schema: { $ref: '#/components/schemas/Error' }
  *              
  */
-router.post('/:userId/:requestId/accept', meetingController.accept);
+router.post('/:userId/:meetingId/accept', meetingController.accept);
 
 
 /**

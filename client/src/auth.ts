@@ -29,11 +29,11 @@ loginForm?.addEventListener('submit', async (e) => {
 
         const data = await res.json();
 
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('userId', data.userId);
-        localStorage.setItem('userEmail', email);
-        localStorage.setItem('userRole', isOwner ? 'owner' : 'user');
 
+        localStorage.setItem('userId', data);
+        console.log(data);
+        //console.log(localStorage.getItem('userId'))
+    
         window.location.href = isOwner ? 'prof_dash.html' : 'main.html';
 
     } catch (err) {

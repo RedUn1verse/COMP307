@@ -62,7 +62,7 @@ const UserController = {
 
   async login(req, res){
     const userEmail = req.body.email
-    const userPwd = req.body.pwd
+    const userPwd = req.body.password
 
     if(typeof userEmail !== 'string' || userEmail.trim() === '') {
       return res.status(400).json("Must include email")

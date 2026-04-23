@@ -22,6 +22,7 @@ export async function apiCall(
     'Content-Type': 'application/json',
   };
 
+
   // Add auth token if it exists
   const token = localStorage.getItem('accessToken');
   if (token) {
@@ -126,15 +127,17 @@ export const slots = {
 
 // Meeting Endpoints
 export const meetings = {
+  
   create: (data: any) =>
-    apiCall('/meeting/create', {
+    apiCall(`/meeting/${localStorage.getItem("userId")}/create`, {
       method: 'POST',
       body: JSON.stringify(data),
     }),
-  getMe: () => apiCall('/meeting/me', { method: 'GET' }),
-  accept: (meetingId: string) => apiCall(`/meeting/${meetingId}/accept`, { method: 'POST' }),
-  decline: (meetingId: string) => apiCall(`/meeting/${meetingId}/decline`, { method: 'POST' }),
+  getMe: () => apiCall(`/meeting/${localStorage.getItem("userId")}`, { method: 'GET' }),
+  accept: (meetingId: string) => apiCall(`/meeting/${localStorage.getItem("userId")}/${meetingId}/accept`, { method: 'POST' }),
+  decline: (meetingId: string) => apiCall(`/meeting/${localStorage.getItem("userId")}/${meetingId}/decline`, { method: 'POST' }),
 };
+
 
 // Proposal Endpoints
 export const proposals = {
