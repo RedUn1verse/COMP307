@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('accessToken', 'temp-token-for-testing');
     localStorage.setItem('userRole', 'owner');
     localStorage.setItem('userId', 'o1');
-    localStorage.setItem('userEmail', 'prof@mcgill.ca');
+    localStorage.setItem('userEmail', 'carol@mcgill.ca');
 
     showDashboardView();
 });
@@ -136,6 +136,48 @@ async function showDashboardView() {
     await loadMeetingRequests();
     await loadGroupProposals();
     await loadRecurringView();
+    await updateSidebarActiveSlots();
+}
+
+// Update sidebar with professor's active slots
+async function updateSidebarActiveSlots() {
+    const sidebarSlots = document.getElementById('sidebar-active-slots');
+    if (!sidebarSlots) return;
+
+    try {
+        const data = await slots.getOwned();
+        const slotsList = Array.isArray(data) ? data : data.slots || [];
+        const activeSlots = slotsList.filter((slot: any) => !slot.isPrivate);
+
+        if (activeSlots.length === 0) {
+            sidebarSlots.innerHTML = '<div style="padding: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7);">No active slots</div>';
+            return;
+        }
+
+        let html = '';
+        for (const slot of activeSlots) {
+            const isBooked = slot.isBooked || (slot.bookings && slot.bookings.length > 0);
+            const bookingCount = slot.bookings?.length || 0;
+            const statusDot = isBooked ? 'Y' : 'N';
+            
+            html += `
+                <div style="
+                    padding: 10px; background: rgba(255,255,255,0.1); border-radius: 4px;
+                    font-size: 0.85rem; cursor: pointer; transition: background 0.2s;
+                " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                    <div style="font-weight: 500; margin-bottom: 4px;">${statusDot} ${slot.title}</div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">${slot.date}</div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">${slot.startTime} - ${slot.endTime}</div>
+                    ${bookingCount > 0 ? `<div style="font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 4px;">Booked: ${bookingCount}</div>` : ''}
+                </div>
+            `;
+        }
+        
+        sidebarSlots.innerHTML = html;
+    } catch (error) {
+        console.error('Failed to update sidebar slots:', error);
+        sidebarSlots.innerHTML = '<div style="padding: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7);">Error loading slots</div>';
+    }
 }
 
 // Load Private Appointments
@@ -347,6 +389,7 @@ async function loadRecurringView() {
 
             for (const slot of slotsByDate[date]) {
                 const isBooked = slot.isBooked || (slot.bookings && slot.bookings.length > 0);
+                const bookingCount = slot.bookings?.length || 0;
                 html += `
                     <div style="background: ${isBooked ? '#fafafa' : '#f5f5f5'}; border: 1px solid #ddd; border-radius: 6px; padding: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -356,7 +399,8 @@ async function loadRecurringView() {
                             </span>
                         </div>
                         <p style="margin: 8px 0; font-size: 0.95rem;"><strong>⏰</strong> ${slot.startTime} - ${slot.endTime}</p>
-                        ${isBooked ? `<p style="margin: 8px 0; font-size: 0.9rem; color: #666;"><strong>✓ Booked</strong></p>` : `<p style="margin: 8px 0; font-size: 0.9rem; color: #999;">Available</p>`}
+                        ${isBooked ? `<p style="margin: 8px 0; font-size: 0.9rem; color: #666;"><strong>✓ Booked</strong> (${bookingCount})</p>` : `<p style="margin: 8px 0; font-size: 0.9rem; color: #999;">Available</p>`}
+                        <button class="delete-slot-btn" data-slot-id="${slot.slotId}" style="margin-top: 10px; padding: 8px 12px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Cancel Slot</button>
                     </div>
                 `;
             }
@@ -824,6 +868,15 @@ function openNewRecurringModal() {
                     </select>
                 </div>
 
+                <div>
+                    <label for="recurring-count" style="display: block; margin-bottom: 5px; font-weight: 500;">Repeat Count</label>
+                    <input type="number" id="recurring-count" min="1" value="4" style="
+                        width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                        box-sizing: border-box; font-family: inherit;
+                    ">
+                    <p style="margin: 6px 0 0 0; font-size: 0.85rem; color: #666;">Number of weekly occurrences to create.</p>
+                </div>
+
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" style="
                         flex: 1; padding: 12px; background: var(--mcgill-red); color: white; border: none;
@@ -904,6 +957,7 @@ async function handleRecurringCreation(form: HTMLFormElement, modal: HTMLElement
     const startTime = (form.querySelector('#recurring-start-time') as HTMLInputElement).value;
     const endTime = (form.querySelector('#recurring-end-time') as HTMLInputElement).value;
     const frequency = (form.querySelector('#recurring-frequency') as HTMLSelectElement).value;
+    const recurrenceCount = parseInt((form.querySelector('#recurring-count') as HTMLInputElement).value, 10) || 1;
 
     if (!title || !date || !startTime || !endTime) {
         alert('Please fill in all required fields');
@@ -915,22 +969,43 @@ async function handleRecurringCreation(form: HTMLFormElement, modal: HTMLElement
         return;
     }
 
+    if (frequency === 'weekly' && recurrenceCount < 1) {
+        alert('Repeat count must be at least 1');
+        return;
+    }
+
     try {
         const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Creating...';
 
-        const slot = await slots.create({
-            title,
-            date,
-            startTime,
-            endTime
-        });
+        if (frequency === 'single') {
+            // Single slot - just create and activate it
+            const slot = await slots.create({
+                title,
+                date,
+                startTime,
+                endTime
+            });
+            await slots.activate(slot.slotId);
+            alert(`Public slot "${title}" created successfully!`);
+        } else if (frequency === 'weekly') {
+            // Recurring slots - use the count provided
+            const slots_created = await slots.createRecurring({
+                title,
+                date,
+                startTime,
+                endTime,
+                reccurence: recurrenceCount // Note: backend uses 'reccurence' spelling
+            });
+            
+            // Activate all the slots
+            for (const slot of slots_created) {
+                await slots.activate(slot.slotId);
+            }
+            alert(`Weekly recurring OH "${title}" created for ${recurrenceCount} weeks and published!`);
+        }
 
-        await slots.activate(slot.slotId);
-
-        const recurrenceLabel = frequency === 'weekly' ? 'Weekly' : 'Single';
-        alert(`${recurrenceLabel} recurring OH "${title}" created and published successfully!`);
         modal.remove();
         await loadPrivateAppointments();
         await loadRecurringView();
