@@ -3,6 +3,12 @@ const UserModel        = require('../models/usermodel');
 const MeetingDto          = require('../dtos/meetingdto');
 const EmailService = require('../services/emailservice.js');
 const SlotModel = require('../models/slotmodel.js');
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+const isValidDate = (s) => typeof s === 'string' && dayjs(s, 'YYYY-MM-DD', true).isValid();
+const isValidTime = (s) => typeof s === 'string' && dayjs(s, 'HH:mm', true).isValid();
 
 const MeetingRequestController = {
 
@@ -17,14 +23,21 @@ const MeetingRequestController = {
     if (typeof ownerEmail !== 'string' || !ownerEmail.trim()) errors.push('ownerEmail is required');
     if (typeof title !== 'string' || !title.trim()) errors.push('title is required');
     if (typeof message    !== 'string' || !message.trim())    errors.push('message is required');
-    if (typeof date       !== 'string' || !date)              errors.push('date is required');
-    if (typeof startTime !== 'string' || !startTime)        errors.push('startTime is required');
-    if (typeof endTime   !== 'string' || !endTime)          errors.push('endTime is required');
-    if (errors.length) return res.status(400).json({ errors });
+    if (!isValidDate(date)) errors.push('date must be a valid YYYY-MM-DD format');
+    if (!isValidTime(startTime)) errors.push('startTime must be a valid HH:mm format');
+    if (!isValidTime(endTime)) errors.push('endTime must be a valid HH:mm format');
+    if (isValidTime(startTime) && isValidTime(endTime) && startTime >= endTime) {
+      errors.push('startTime must be before endTime');
+    }
 
     const owner = await UserModel.findByEmail(ownerEmail.trim());
     if (!owner || owner.role !== 'owner') return res.status(404).json({ error: 'Owner not found' });
     if (owner.userId === me.userId)       return res.status(400).json({ error: 'Cannot request a meeting with yourself' });
+
+    
+    
+    if (errors.length) return res.status(400).json({ error: errors[0] });
+
 
     // ========== MAIN fct ================
     meeting = await MeetingModel.create(me.userId, owner.userId, message.trim(), title.trim(), date, startTime, endTime );

@@ -7,6 +7,9 @@ const EmailService = require('../services/emailservice.js');
 const dayjs = require('dayjs');
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
+const isValidDate = (s) => typeof s === 'string' && dayjs(s, 'YYYY-MM-DD', true).isValid();
+const isValidTime = (s) => typeof s === 'string' && dayjs(s, 'HH:mm', true).isValid();
+
 
 // TODO: Move to user Model + Convert to MongoDB
 const findUser = (userId) => db.users.find(u => u.userId === userId) ?? null;
@@ -74,6 +77,15 @@ const ProposalController = {
         }
         const invalidOption = options.some(o => !o?.date || !o?.startTime || !o?.endTime);
         if (invalidOption) return res.status(400).json({ error: 'each option needs date, startTime, endTime' });
+
+
+        for (const o of options) {
+            if (!isValidDate(o.date)) return res.status(400).json({ error: 'date must be a valid YYYY-MM-DD format' });
+            if (!isValidTime(o.startTime)) return res.status(400).json({ error: 'startTime must be a valid HH:mm format' });
+            if (!isValidTime(o.endTime)) return res.status(400).json({ error: 'endTime must be a valid HH:mm format' });
+            if (o.startTime >= o.endTime) return res.status(400).json({ error: 'startTime must be before endTime' });
+        }
+
 
         const unknownUserNames = [];
         const userIds = [];

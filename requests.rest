@@ -56,11 +56,11 @@ Content-Type: application/json
 
 {
   "ownerEmail": "carol@mcgill.ca",
-  "title": "TEST DEMO",
-  "message": "Need to demo app",
-  "date": "2026-06-20",
+  "title": "Office Hour",
+  "message": "Question about lesson 3",
+  "date": "2026-06-28",
   "startTime": "11:00",
-  "endTime": "12:30"
+  "endTime": "10:30"
 }
 
 ###
@@ -103,7 +103,7 @@ Content-Type: application/json
     {
       "date": "2026-05-04",
       "startTime": "09:00",
-      "endTime": "11:00"
+      "endTime": "8:00"
     },
     {
       "date": "2026-05-06",
@@ -146,7 +146,7 @@ Content-Type: application/json
 {
   "title"     : "AHHH Quiz",
   "date"      : "2026-03-03",
-  "startTime" : "9:00",
+  "startTime" : "09:00",
   "endTime"   : "13:00"
 }
 
@@ -216,14 +216,14 @@ Content-Type: application/json
 }
 
 
-###
-POST {{baseUrl}}/proposal/test/
-Content-Type: application/json
+# ###
+# POST {{baseUrl}}/proposal/test/
+# Content-Type: application/json
 
-{
-  "optionId": "p2",
-  "reccurence": 2
-}
+# {
+#   "optionId": "p2",
+#   "reccurence": 2
+# }
 
 ###
 POST {{baseUrl}}/slot/o1/createR

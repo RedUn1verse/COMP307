@@ -33,9 +33,9 @@ const SlotController = {
     const errors = [];
     const { date, startTime, endTime, title, reccurence } = req.body ?? {};
     if (typeof title !== 'string' || title.trim() === '') errors.push('title is required');
-    if (!isValidDate(date)) errors.push('date must be in YYYY-MM-DD format');
-    if (!isValidTime(startTime)) errors.push('startTime must be in HH:mm format');
-    if (!isValidTime(endTime)) errors.push('endTime must be in HH:mm format');
+    if (!isValidDate(date)) errors.push('date must be a valid YYYY-MM-DD format');
+    if (!isValidTime(startTime)) errors.push('startTime must be a valid HH:mm format');
+    if (!isValidTime(endTime)) errors.push('endTime must be a valid HH:mm format');
     if (isValidTime(startTime) && isValidTime(endTime) && startTime >= endTime) {
       errors.push('startTime must be before endTime');
     }
@@ -63,13 +63,15 @@ const SlotController = {
     }
 
     const errors = [];
-    const { date, startTime, endTime, title } = req.body ?? {};
+    const { date, startTime, endTime, title} = req.body ?? {};
     if (typeof title !== 'string' || title.trim() === '') errors.push('title is required');
-    if (typeof date !== 'string' || date.trim() === '') errors.push('date is required');
-    if (typeof startTime !== 'string' || startTime.trim() === '') errors.push('startTime is required');
-    if (typeof endTime !== 'string' || endTime.trim() === '') errors.push('endTime is required');
-    if (errors.length) return res.status(400).json({ error: error[0] });
-   
+    if (!isValidDate(date)) errors.push('date must be a valid YYYY-MM-DD format');
+    if (!isValidTime(startTime)) errors.push('startTime must be a valid HH:mm format');
+    if (!isValidTime(endTime)) errors.push('endTime must be a valid HH:mm format');
+    if (isValidTime(startTime) && isValidTime(endTime) && startTime >= endTime) {
+      errors.push('startTime must be before endTime');
+    }
+    if (errors.length) return res.status(400).json({ error: errors[0] });
 
     const slot = await SlotModel.create(ownerId, date, startTime, endTime, title, false, true); // isBooked = false, isPrivate = true
     res.status(201).json(SlotDto.responseSlot(slot));
