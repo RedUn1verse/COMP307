@@ -9,6 +9,10 @@ const UserModel = {
     return await db.collection('users').findOne({ userId });
   },
 
+  async getPublicId(userId){
+    const db = getDB();
+    return await db.collection('owners').findOne({userId});
+  },
   
   async findByEmail(email) {
     const db = getDB();

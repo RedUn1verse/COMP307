@@ -80,6 +80,19 @@ const UserController = {
     res.status(200).json(user.userId)
 
   },
+
+  async getMyPublicId(req,res){
+    const owner = await UserModel.findById(req.params.userId);
+
+    if(!owner) return res.status(404).json("This user does not exist")
+    
+    if(owner.role !== "owner") return res.status(403).json("Only owners have public id")
+    
+    const ownerObject = await UserModel.getPublicId(req.params.userId);
+
+    return res.status(200).json({publicId: ownerObject.publicId});
+    
+  }
 }
 
 module.exports = UserController;

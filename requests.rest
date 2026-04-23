@@ -236,3 +236,5 @@ Content-Type: application/json
   "endTime": "10:00",
   "reccurence": 3
 }
+###
+GET {{baseUrl}}/user/o1/myPublicId
