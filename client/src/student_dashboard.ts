@@ -3,7 +3,7 @@
  * Self-contained implementation with its own modal and button handlers
  */
 
-import { meetings, bookings } from './api';
+import { meetings, bookings, proposals } from './api';
 
 // --- Interfaces ---
 
@@ -58,6 +58,9 @@ function handleSidebarNavigation(linkText: string) {
       break;
     case 'My Appointments':
       showMyAppointmentsView();
+      break;
+    case 'Group Polls':
+      showGroupPollsView();
       break;
     case 'My Courses':
       window.location.href = 'https://mycourses2.mcgill.ca/';
@@ -370,6 +373,114 @@ async function showMyAppointmentsView() {
     console.error('Failed to fetch appointments:', error);
     document.getElementById('appointments-container')!.innerHTML =
       '<p style="padding:20px;color:red;">Failed to load appointments.</p>';
+  }
+}
+
+async function showGroupPollsView() {
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent) return;
+
+  mainContent.innerHTML = `
+    <header class="content-header">
+      <h1 class="page-title">Group Polls</h1>
+      <p class="page-description">Vote on available office hour time slots</p>
+    </header>
+    <div id="polls-container" style="padding: 20px;">
+      <p>Loading group polls...</p>
+    </div>
+  `;
+
+  try {
+    // Fetch proposals where the student is invited
+    const proposalsData = await proposals.getForUser();
+    const pollsList = Array.isArray(proposalsData) ? proposalsData : [];
+
+    const container = document.getElementById('polls-container')!;
+
+    if (pollsList && pollsList.length > 0) {
+      let html = '<div style="display:grid;gap:20px;">';
+      
+      for (const poll of pollsList) {
+        html += `
+          <div style="border:1px solid #ddd;border-radius:8px;padding:20px;background:#f9f9f9;">
+            <h3 style="margin:0 0 15px 0;color:var(--mcgill-red);">${poll.title}</h3>
+            <p style="margin:0 0 15px 0;font-size:0.95rem;color:#666;">
+              <strong>Professor:</strong> ${poll.ownerName || 'Unknown'}
+            </p>
+            
+            <div style="margin-bottom:15px;">
+              <p style="margin:0 0 10px 0;font-weight:600;font-size:0.95rem;">Available Time Slots:</p>
+              <div style="display:grid;gap:10px;">
+        `;
+
+        // Display voting options
+        for (const option of poll.options || []) {
+          const voteCount = option.voteCount || 0;
+          const votePercentage = Math.round((voteCount / 100) * 100) || 0;
+          
+          html += `
+                <div style="background:white;border:1px solid #e0e0e0;border-radius:6px;padding:12px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <div>
+                      <p style="margin:0;font-weight:500;">${option.date}</p>
+                      <p style="margin:0;font-size:0.9rem;color:#666;">${option.startTime} - ${option.endTime}</p>
+                    </div>
+                    <button class="vote-option-btn" data-proposal-id="${poll.proposalId}" data-option-id="${option.optionId}" 
+                      style="padding:8px 16px;background:var(--mcgill-red);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:500;">
+                      Vote (${voteCount})
+                    </button>
+                  </div>
+                  <div style="background:#f0f0f0;height:6px;border-radius:3px;overflow:hidden;">
+                    <div style="background:var(--mcgill-red);height:100%;width:${votePercentage}%;"></div>
+                  </div>
+                </div>
+          `;
+        }
+
+        html += `
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+      container.innerHTML = html;
+
+      // Add vote button listeners
+      document.querySelectorAll('.vote-option-btn').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          const button = e.target as HTMLButtonElement;
+          const proposalId = button.getAttribute('data-proposal-id');
+          const optionId = button.getAttribute('data-option-id');
+          
+          if (proposalId && optionId) {
+            try {
+              button.disabled = true;
+              button.textContent = 'Voting...';
+              
+              await proposals.vote(proposalId, [optionId]);
+              
+              alert('Your vote has been recorded!');
+              await showGroupPollsView(); // Refresh the view
+            } catch (error) {
+              console.error('Failed to vote:', error);
+              alert('Failed to record your vote. Please try again.');
+              button.disabled = false;
+              const count = button.textContent?.match(/\d+/)?.[0] || '0';
+              button.textContent = `Vote (${count})`;
+            }
+          }
+        });
+      });
+    } else {
+      container.innerHTML =
+        '<p style="padding:20px;text-align:center;color:#666;">No active group polls at this time.</p>';
+    }
+  } catch (error) {
+    console.error('Failed to fetch group polls:', error);
+    document.getElementById('polls-container')!.innerHTML =
+      '<p style="padding:20px;color:red;">Failed to load group polls.</p>';
   }
 }
 
