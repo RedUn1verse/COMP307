@@ -22,7 +22,7 @@ loginForm?.addEventListener('submit', async (e) => {
         const res = await fetch('/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, pwd: password })
         });
 
         if (!res.ok) throw new Error('Login failed');

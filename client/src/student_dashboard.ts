@@ -327,7 +327,7 @@ async function showMyAppointmentsView() {
 
   mainContent.innerHTML = `
     <header class="content-header">
-      <h1 class="page-title">My Appointments</h1>
+      <h1 class="page-title">Your Appointments</h1>
       <p class="page-description">Your booked office hour appointments</p>
     </header>
     <div id="appointments-container" style="padding: 20px;">
