@@ -3,7 +3,7 @@
  * Backend runs on http://127.0.0.1:3000
  * Vite dev server proxies requests to /auth, /bookings, /users to the backend
  */
-
+import { getUserId } from './auth';
 const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname !== '127.0.0.1' 
   ? 'https://winter2026-comp307-group09.cs.mcgill.ca'
   : '';
@@ -76,7 +76,7 @@ export const bookings = {
   getAll: () => apiCall('/booking', { method: 'GET' }),
   getById: (id: string) => apiCall(`/booking/${id}`, { method: 'GET' }),
   getMyBookings: () => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/booking/${userId}`, { method: 'GET' });
   },
@@ -106,13 +106,13 @@ export const bookings = {
 // Slot Endpoints
 export const slots = {
   getOwned: () => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/owned`, { method: 'GET' });
   },
   getAvailableByOwner: (ownerId: string) => apiCall(`/slot/${ownerId}`, { method: 'GET' }),
   create: (data: any) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/create`, {
       method: 'POST',
@@ -120,7 +120,7 @@ export const slots = {
     });
   },
   createRecurring: (data: any) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/createR`, {
       method: 'POST',
@@ -128,7 +128,7 @@ export const slots = {
     });
   },
   activate: (slotId: string) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/${slotId}/activate`, {
       method: 'PUT',
@@ -136,17 +136,17 @@ export const slots = {
     });
   },
   deleteSlot: (slotId: string) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/${slotId}`, { method: 'DELETE' });
   },
   book: (slotId: string) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/${slotId}/book`, { method: 'POST' });
   },
   emailOwner: (slotId: string) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/slot/${userId}/${slotId}/email`, { method: 'POST' });
   },
@@ -154,32 +154,44 @@ export const slots = {
 
 // Meeting Endpoints
 export const meetings = {
-  
-  create: (data: any) =>
-    apiCall(`/meeting/${localStorage.getItem("userId")}/create`, {
+  create: (data: any) => {
+    const userId = getUserId();
+    return apiCall(`/meeting/${userId}/create`, {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
-  getMe: () => apiCall(`/meeting/${localStorage.getItem("userId")}`, { method: 'GET' }),
-  accept: (meetingId: string) => apiCall(`/meeting/${localStorage.getItem("userId")}/${meetingId}/accept`, { method: 'POST' }),
-  decline: (meetingId: string) => apiCall(`/meeting/${localStorage.getItem("userId")}/${meetingId}/decline`, { method: 'POST' }),
+    });
+  },
+  getMe: () => {
+    const userId = getUserId();
+    return apiCall(`/meeting/${userId}`, { method: 'GET' });
+  },
+
+  accept: (meetingId: string) => {
+    const userId = getUserId();
+    return apiCall(`/meeting/${userId}/${meetingId}/accept`, { method: 'POST' });
+  },
+
+  decline: (meetingId: string) => {
+    const userId = getUserId();
+    return apiCall(`/meeting/${userId}/${meetingId}/decline`, { method: 'POST' });
+  },
 };
 
 
 // Proposal Endpoints
 export const proposals = {
   getForUser: () => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/proposal/${userId}`, { method: 'GET' });
   },
   getOwned: () => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/proposal/${userId}/owned`, { method: 'GET' });
   },
   create: (data: any) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/proposal/${userId}/create`, {
       method: 'POST',
@@ -187,7 +199,7 @@ export const proposals = {
     });
   },
   select: (proposalId: string, optionId: string) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/proposal/${userId}/${proposalId}/select`, {
       method: 'POST',
@@ -195,7 +207,7 @@ export const proposals = {
     });
   },
   vote: (proposalId: string, optionIds: string[]) => {
-    const userId = localStorage.getItem('userId');
+    const userId = getUserId();
     if (!userId) throw new Error('No user ID found');
     return apiCall(`/proposal/${userId}/${proposalId}/vote`, {
       method: 'POST',

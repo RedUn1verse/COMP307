@@ -30,7 +30,8 @@ loginForm?.addEventListener('submit', async (e) => {
         const data = await res.json();
 
 
-        localStorage.setItem('userId', data);
+        //localStorage.setItem('userId', data);
+	document.cookie = `userId=${data}; path=/`;
         console.log(data);
         //console.log(localStorage.getItem('userId'))
     
@@ -41,3 +42,8 @@ loginForm?.addEventListener('submit', async (e) => {
         alert("Login failed");
     }
 });
+
+export function getUserId(): string | null {
+  const match = document.cookie.match(/(^| )userId=([^;]+)/);
+  return match ? match[2] : null;
+}
