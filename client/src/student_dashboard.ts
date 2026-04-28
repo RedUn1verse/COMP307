@@ -134,8 +134,16 @@ async function showOwnerSlotsView(publicId: string, professorName: string) {
         background:none;border:none;color:var(--mcgill-red);cursor:pointer;
         font-size:0.95rem;padding:0;margin-bottom:10px;
       ">&larr; Back to Browse Professors</button>
-      <h1 class="page-title">${professorName}</h1>
-      <p class="page-description">Available office hour slots</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:15px;">
+        <div>
+          <h1 class="page-title">${professorName}</h1>
+          <p class="page-description">Available office hour slots</p>
+        </div>
+        <button id="request-meeting-btn" style="
+          padding:10px 20px;background:#D20A11;color:white;border:none;
+          border-radius:6px;cursor:pointer;font-weight:500;
+        ">Request Meeting</button>
+      </div>
     </header>
     <div id="owner-slots-container" style="padding:20px;">
       <p>Loading available slots...</p>
@@ -145,6 +153,11 @@ async function showOwnerSlotsView(publicId: string, professorName: string) {
   document
     .getElementById('back-to-browse')
     ?.addEventListener('click', () => showBrowseProfessorsView());
+
+  document
+    .getElementById('request-meeting-btn')
+    ?.addEventListener('click', () => openBookingModal(professorName));
+
 
   const container = document.getElementById('owner-slots-container')!;
 
@@ -455,24 +468,52 @@ async function showMyAppointmentsView() {
       let html = '<div style="display:grid;gap:15px;">';
       appointments.forEach((apt) => {
         html += `
-          <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;">
-            <h3 style="margin:0 0 10px 0;">${apt.ownerName}</h3>
-            <p style="margin:5px 0;"><strong>Date:</strong>
-              ${new Date(apt.date).toLocaleDateString()}</p>
-            <p style="margin:5px 0;"><strong>Time:</strong>
-              ${apt.startTime} - ${apt.endTime}</p>
-            <p style="margin:5px 0;"><strong>Status:</strong>
-              <span style="color:${'orange'};">
-                ${"confirmed"}
-              <p style="margin:5px 0;"><strong>Email:</strong>
-              <a href="mailto:${apt.ownerEmail}">${apt.ownerEmail}</a></p>
-              </span>
-            </p>
+          <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;
+            display:flex;justify-content:space-between;align-items:flex-start;gap:15px;">
+            <div>
+              <h3 style="margin:0 0 10px 0;">${apt.ownerName}</h3>
+              <p style="margin:5px 0;"><strong>Date:</strong>
+                ${new Date(apt.date).toLocaleDateString()}</p>
+              <p style="margin:5px 0;"><strong>Time:</strong>
+                ${apt.startTime} - ${apt.endTime}</p>
+              <p style="margin:5px 0;"><strong>Status:</strong>
+                <span style="color:${'green'};">
+                  ${"confirmed"}
+                <p style="margin:5px 0;"><strong>Email:</strong>
+                <a href="mailto:${apt.ownerEmail}">${apt.ownerEmail}</a></p>
+                </span>
+              </p>
+            </div>
+            <button class="cancel-booking-btn" data-booking-id="${apt.bookingId}" style="
+              padding:10px 20px;background:#fff;color:#D20A11;border:1px solid #D20A11;
+              border-radius:6px;cursor:pointer;font-weight:500;
+            ">Cancel Booking</button>
           </div>
         `;
       });
       html += '</div>';
       container.innerHTML = html;
+
+      container.querySelectorAll('.cancel-booking-btn').forEach((btn) => {
+        btn.addEventListener('click', async (e) => {
+          const button = e.currentTarget as HTMLButtonElement;
+          const bookingId = button.getAttribute('data-booking-id');
+          if (!bookingId) return;
+          if (!confirm('Cancel this booking?')) return;
+          button.disabled = true;
+          button.textContent = 'Cancelling...';
+          try {
+            await bookings.cancelBooking(bookingId);
+            alert('Booking cancelled.');
+            showMyAppointmentsView();
+          } catch (error) {
+            console.error('Failed to cancel booking:', error);
+            alert('Failed to cancel booking. Please try again.');
+            button.disabled = false;
+            button.textContent = 'Cancel Booking';
+          }
+        });
+      });
     } else {
       container.innerHTML =
         '<p style="padding:20px;text-align:center;color:#666;">No appointments booked yet.</p>';
