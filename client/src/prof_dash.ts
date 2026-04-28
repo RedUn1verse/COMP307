@@ -158,14 +158,14 @@ async function updateSidebarActiveSlots() {
         for (const slot of activeSlots) {
             const isBooked = slot.isBooked || (slot.bookings && slot.bookings.length > 0);
             const bookingCount = slot.bookings?.length || 0;
-            const statusDot = isBooked ? 'Y' : 'N';
+            //const statusDot = isBooked ? 'Y' : 'N';
             
             html += `
                 <div style="
                     padding: 10px; background: rgba(255,255,255,0.1); border-radius: 4px;
                     font-size: 0.85rem; cursor: pointer; transition: background 0.2s;
                 " onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-                    <div style="font-weight: 500; margin-bottom: 4px;">${statusDot} ${slot.title}</div>
+                    <div style="font-weight: 500; margin-bottom: 4px;">${slot.title}</div>
                     <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">${slot.date}</div>
                     <div style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">${slot.startTime} - ${slot.endTime}</div>
                     ${bookingCount > 0 ? `<div style="font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 4px;">Booked: ${bookingCount}</div>` : ''}
