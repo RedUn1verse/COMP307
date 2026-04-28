@@ -1,7 +1,9 @@
+// Author: Delana Ryan 
+// Student ID: 261083962
+
 /**
  * Student Dashboard for the main.html page
- * Self-contained implementation with its own modal and button handlers
- */
+ **/
 
 import { meetings, bookings, proposals, users, slots} from './api';
 

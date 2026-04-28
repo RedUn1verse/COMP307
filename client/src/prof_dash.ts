@@ -1,6 +1,8 @@
+// Author: Delana Ryan 
+// Student ID: 261083962
+
 import { slots, meetings, proposals } from './api';
 
-// Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
     // TEMPORARY: Bypass auth to work on dashboard
     // Set dummy values so we can test without logging in
@@ -33,32 +35,27 @@ document.addEventListener('click', (e) => {
         switchTab(target.getAttribute('data-tab') || 'private');
     }
 
-    // Activate slot button
     if (target.classList.contains('activate-slot-btn')) {
         const slotId = target.getAttribute('data-slot-id');
         if (slotId) activateSlot(slotId, target);
     }
 
-    // Accept meeting button
     if (target.classList.contains('accept-meeting-btn')) {
         const meetingId = target.getAttribute('data-meeting-id');
         if (meetingId) acceptMeeting(meetingId, target);
     }
 
-    // Decline meeting button
     if (target.classList.contains('decline-meeting-btn')) {
         const meetingId = target.getAttribute('data-meeting-id');
         if (meetingId) declineMeeting(meetingId, target);
     }
 
-    // Select option button from group proposal
     if (target.classList.contains('select-option-btn')) {
         const proposalId = target.getAttribute('data-proposal-id');
         const optionId = target.getAttribute('data-option-id');
         if (proposalId && optionId) selectProposalOption(proposalId, optionId, target);
     }
 
-    // Delete slot button
     if (target.classList.contains('delete-slot-btn')) {
         const slotId = target.getAttribute('data-slot-id');
         if (slotId) deleteSlot(slotId, target);
@@ -140,7 +137,6 @@ async function showDashboardView() {
     await updateSidebarActiveSlots();
 }
 
-// Update sidebar with professor's active slots
 async function updateSidebarActiveSlots() {
     const sidebarSlots = document.getElementById('sidebar-active-slots');
     if (!sidebarSlots) return;
@@ -157,7 +153,7 @@ async function updateSidebarActiveSlots() {
 
         let html = '';
         for (const slot of activeSlots) {
-            const isBooked = slot.isBooked || (slot.bookings && slot.bookings.length > 0);
+            //const isBooked = slot.isBooked || (slot.bookings && slot.bookings.length > 0);
             const bookingCount = slot.bookings?.length || 0;
             //const statusDot = isBooked ? 'Y' : 'N';
             
@@ -181,7 +177,6 @@ async function updateSidebarActiveSlots() {
     }
 }
 
-// Load Private Appointments
 async function loadPrivateAppointments() {
     const privateTab = document.getElementById('private-tab');
     if (!privateTab) return;
@@ -242,7 +237,6 @@ async function loadPrivateAppointments() {
     }
 }
 
-// Load Meeting Requests
 async function loadMeetingRequests() {
     const requestsTab = document.getElementById('requests-tab');
     if (!requestsTab) return;
@@ -295,7 +289,6 @@ async function loadMeetingRequests() {
     }
 }
 
-// Load Group Polls
 async function loadGroupProposals() {
     const groupTab = document.getElementById('group-tab');
     if (!groupTab) return;
@@ -349,7 +342,6 @@ async function loadGroupProposals() {
     }
 }
 
-// Load Recurring OH View
 async function loadRecurringView() {
     const recurringTab = document.getElementById('recurring-tab');
     if (!recurringTab) return;
@@ -456,7 +448,6 @@ function switchTab(tabName: string) {
     }
 }
 
-// Activate Slot (make it public)
 async function activateSlot(slotId: string, button: HTMLElement) {
     try {
         const btn = button as HTMLButtonElement;
@@ -476,7 +467,6 @@ async function activateSlot(slotId: string, button: HTMLElement) {
     }
 }
 
-// Delete Slot
 async function deleteSlot(slotId: string, button: HTMLElement) {
     if (!confirm('Are you sure you want to delete this slot?')) return;
 
@@ -499,7 +489,6 @@ async function deleteSlot(slotId: string, button: HTMLElement) {
     }
 }
 
-// Accept Meeting Request
 async function acceptMeeting(meetingId: string, button: HTMLElement) {
     try {
         const btn = button as HTMLButtonElement;
@@ -519,7 +508,6 @@ async function acceptMeeting(meetingId: string, button: HTMLElement) {
     }
 }
 
-// Decline Meeting Request
 async function declineMeeting(meetingId: string, button: HTMLElement) {
     try {
         const btn = button as HTMLButtonElement;
@@ -539,7 +527,6 @@ async function declineMeeting(meetingId: string, button: HTMLElement) {
     }
 }
 
-// Other Views
 function showHelpAndSupportView() {
     const mainContent = document.querySelector('.main-content');
     if (!mainContent) return;
@@ -572,7 +559,6 @@ function showSettingsView() {
     `;
 }
 
-// New Private Slot Modal
 function openNewSlotModal() {
     // Remove any existing modal
     const existingModal = document.getElementById('slot-modal');
