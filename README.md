@@ -7,10 +7,10 @@
 3. ``` node server.js ```
 
 This runs the backend. To start the frontend:
-4. Open a new terminal window. Ensure you are still in winter2026-comp307.
-5. ``` cd COMP307/client ```
-6. ``` npm run dev ```
-7. Access the website at: https://winter2026-comp307-group09.cs.mcgill.ca
+1. Open a new terminal window. Ensure you are still in winter2026-comp307.
+2. ``` cd COMP307/client ```
+3. ``` npm run dev ```
+4. Access the website at: https://winter2026-comp307-group09.cs.mcgill.ca
 
 If you receive errors, it is likely some packages are missing. Run ``` npm install ``` and try again. 
 
