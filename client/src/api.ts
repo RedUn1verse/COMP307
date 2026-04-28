@@ -55,20 +55,21 @@ export const auth = {
 
 // User Endpoints
 export const users = {
-  getAll: () => apiCall('/users', { method: 'GET' }),
-  getById: (id: string) => apiCall(`/users/${id}`, { method: 'GET' }),
+  getActive: () => apiCall('/user/active', { method: 'GET' }),
+  getAll: () => apiCall('/user', { method: 'GET' }),
+  getById: (id: string) => apiCall(`/user/${id}`, { method: 'GET' }),
   create: (data: any) =>
-    apiCall('/users', {
+    apiCall('/user', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   update: (id: string, data: any) =>
-    apiCall(`/users/${id}`, {
+    apiCall(`/user/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
   delete: (id: string) =>
-    apiCall(`/users/${id}`, { method: 'DELETE' }),
+    apiCall(`/user/${id}`, { method: 'DELETE' }),
 };
 
 // Booking Endpoints

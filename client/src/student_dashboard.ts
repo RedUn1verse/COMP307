@@ -3,7 +3,7 @@
  * Self-contained implementation with its own modal and button handlers
  */
 
-import { meetings, bookings, proposals } from './api';
+import { meetings, bookings, proposals, users } from './api';
 
 // --- Interfaces ---
 
@@ -29,11 +29,19 @@ interface Appointment {
   ownerPublicId: string;
 }
 
+interface ActiveOwner {
+  name: string;
+  email: string;
+  job: string;
+  publicId?: string;
+}
+
 // --- Init ---
 
 export function initializeStudentDashboard() {
   setupSidebarNavigation();
   setupViewAndBookButtons();
+  showBrowseProfessorsView();
 }
 
 // --- Sidebar ---
@@ -241,11 +249,11 @@ async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
 
 // --- Views ---─
 
-function showBrowseProfessorsView() {
+// 
+async function showBrowseProfessorsView() {
   const mainContent = document.querySelector('.main-content');
   if (!mainContent) return;
 
-  // Card markup matches the compact style defined in style.css
   mainContent.innerHTML = `
     <header class="content-header">
       <h1 class="page-title">Browse Professors</h1>
@@ -255,8 +263,8 @@ function showBrowseProfessorsView() {
     <section class="search-filter-bar">
       <div class="search-input-container">
         <span class="search-icon-placeholder"></span>
-        <input type="text" class="search-input"
-          placeholder="Search by name, department, or expertise...">
+        <input type="text" id="prof-search-input" class="search-input"
+          placeholder="Search by name or email...">
       </div>
       <div class="filter-container">
         <span class="filter-icon-placeholder"></span>
@@ -264,65 +272,55 @@ function showBrowseProfessorsView() {
       </div>
     </section>
 
-    <section class="card-grid">
-      <div class="prof-card">
-        <h2 class="prof-name">Dr. Guilia Alberini</h2>
-        <p class="prof-department">Computer Science</p>
-        <div class="prof-detail">Engineering Building, Room 301</div>
-        <div class="prof-detail">guilia.alberini@mcgill.ca</div>
-        <div class="prof-hours-label">Office Hours</div>
-        <div class="prof-hours-list">
-          Mon 10:00-12:00 &nbsp;|&nbsp; Wed 14:00-16:00
-          <br><a href="#">+1 more</a>
-        </div>
-        <button class="card-action-button view-and-book-btn"
-          data-professor="Dr. Guilia Alberini">View &amp; Book</button>
-      </div>
-
-      <div class="prof-card">
-        <h2 class="prof-name">Dr. Jackie Chen</h2>
-        <p class="prof-department">Computer Science</p>
-        <div class="prof-detail">Math Building, Room 205</div>
-        <div class="prof-detail">jackie.chen@mcgill.ca</div>
-        <div class="prof-hours-label">Office Hours</div>
-        <div class="prof-hours-list">
-          Tue 13:00-15:00 &nbsp;|&nbsp; Thu 13:00-15:00
-        </div>
-        <button class="card-action-button view-and-book-btn"
-          data-professor="Dr. Jackie Chen">View &amp; Book</button>
-      </div>
-
-      <div class="prof-card">
-        <h2 class="prof-name">Dr. Jeremy MacDonald</h2>
-        <p class="prof-department">Mathematics</p>
-        <div class="prof-detail">Burnside Hall, Room 1120</div>
-        <div class="prof-detail">j.macdonald@mcgill.ca</div>
-        <div class="prof-hours-label">Office Hours</div>
-        <div class="prof-hours-list">
-          Mon 14:00-16:00 &nbsp;|&nbsp; Fri 10:00-12:00
-        </div>
-        <button class="card-action-button view-and-book-btn"
-          data-professor="Dr. Jeremy MacDonald">View &amp; Book</button>
-      </div>
-
-      <div class="prof-card">
-        <h2 class="prof-name">Dr. Djivede Kelome</h2>
-        <p class="prof-department">Mathematics</p>
-        <div class="prof-detail">Rutherford Physics, Room 311</div>
-        <div class="prof-detail">d.kelome@mcgill.ca</div>
-        <div class="prof-hours-label">Office Hours</div>
-        <div class="prof-hours-list">
-          Wed 10:00-11:30 &nbsp;|&nbsp; Thu 15:00-16:30
-        </div>
-        <button class="card-action-button view-and-book-btn"
-          data-professor="Dr. Djivede Kelome">View &amp; Book</button>
-      </div>
+    <section id="prof-card-grid" class="card-grid">
+      <p style="padding:20px;color:#666;">Loading professors...</p>
     </section>
   `;
 
-  // Re-attach "View & Book" listeners to the freshly rendered cards
-  setupViewAndBookButtons();
+  const grid = document.getElementById('prof-card-grid')!;
+
+  let owners: ActiveOwner[] = [];
+  try {
+    const data = await users.getActive();
+    owners = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Failed to fetch active owners:', error);
+    grid.innerHTML =
+      '<p style="padding:20px;color:red;">Failed to load professors.</p>';
+    return;
+  }
+
+  const renderCards = (list: ActiveOwner[]) => {
+    if (list.length === 0) {
+      grid.innerHTML =
+        '<p style="padding:20px;color:#666;">No professors with active office hours right now.</p>';
+      return;
+    }
+
+    grid.innerHTML = list
+      .map(
+        (owner) => `
+      <div class="prof-card">
+        <h2 class="prof-name">${owner.name}</h2>
+        <p class="prof-department">${owner.job ?? ''}</p>
+        <div class="prof-detail">${owner.email}</div>
+        <button class="card-action-button view-and-book-btn"
+          data-professor="${owner.name}"
+          data-owner-email="${owner.email}"
+          data-owner-public-id="${owner.publicId ?? ''}">View &amp; Book</button>
+      </div>
+    `,
+      )
+      .join('');
+
+    setupViewAndBookButtons();
+  };
+
+  renderCards(owners);
+
+  
 }
+
 
 async function showMyAppointmentsView() {
   const mainContent = document.querySelector('.main-content');
