@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal - Browse Professors - NameTBD</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+  	const match = document.cookie.match(/(?:^|;\s*)userId=([^;]+)/);
+  	const userId = match ? match[1] : null;
+
+  	if (!userId) {
+    		window.location.href = 'signin.html';
+  	}
+    </script>
 </head>
 <body>
     <nav class="sidebar">
@@ -24,7 +32,7 @@
             <a href="#" class="sidebar-link">My Courses</a>
             <a href="#" class="sidebar-link">Help &amp; Support</a>
             <a href="#" class="sidebar-link">Settings</a>
-	    <a href="#" class="sidebar-link" onclick="window.location.href='signin.html'">Log Out</a>
+	    <a href="#" class="sidebar-link" onclick="document.cookie='userId=; path=/; max-age=0'; window.location.href='signin.html'">Log Out</a>
         </div>
 
         <div class="sidebar-footer">

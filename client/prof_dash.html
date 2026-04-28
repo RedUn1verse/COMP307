@@ -6,6 +6,14 @@
     <title>Professor Portal - Dashboard - TBD</title>
     <link rel="stylesheet" href="style.css">
     <script type="module" src="./src/prof_dash.ts"></script>
+    <script>
+        const match = document.cookie.match(/(?:^|;\s*)userId=([^;]+)/);
+        const userId = match ? match[1] : null;
+
+        if (!userId) {
+                window.location.href = 'signin.html';
+        }
+    </script>
 </head>
 <body>
     <nav class="sidebar">
@@ -26,7 +34,7 @@
             <div class="sidebar-menu-label" style="margin-top: 20px;">Quick Links</div>
             <a href="#" class="sidebar-link">Help & Support</a>
             <a href="#" class="sidebar-link">Settings</a>
-	    <a href="#" class="sidebar-link" onclick="window.location.href='signin.html'">Log Out</a>
+	    <a href="#" class="sidebar-link" onclick="document.cookie='userId=; path=/; max-age=0'; window.location.href='signin.html'">Log Out</a>
         </div>
 
         <div class="sidebar-footer">
