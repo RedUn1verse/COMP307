@@ -73,7 +73,7 @@
         <div class="sidebar-footer">
             <div class="user-photo-placeholder">ID</div>
             <div class="user-details">
-                <div id="sidebar-user-id">userID</div>
+                <div id="sidebar-user-name">userName</div>
                 <div id="sidebar-user-email" style="font-size: 0.75rem; color: rgba(255,255,255,0.8);">userEmail</div>
             </div>
         </div>
@@ -99,9 +99,9 @@
     </main>
     <script>
         // localStorage calls for sidebar info
-        const sidebarUserId = document.getElementById('sidebar-user-id');
+        const sidebarUserName = document.getElementById('sidebar-user-name');
         const sidebarUserEmail = document.getElementById('sidebar-user-email');
-        if (sidebarUserId) sidebarUserId.textContent = localStorage.getItem('userId') || '—';
+        if (sidebarUserName) sidebarUserName.textContent = localStorage.getItem('userName') || '—';
         if (sidebarUserEmail) sidebarUserEmail.textContent = localStorage.getItem('userEmail') || '—';
     </script>
 </body>
