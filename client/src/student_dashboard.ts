@@ -619,7 +619,7 @@ async function showGroupPollsView() {
           let rightHtml: string;
           if (hasVoted) {
             rightHtml = voted
-              ? `<span style="padding:8px 16px;background:#fff;color:var(--mcgill-red);
+              ? `<span style="padding:8px 16px;background:#fff;color:var(--light-gray);
                   border:1px solid var(--mcgill-red);border-radius:4px;font-weight:600;">✓ Voted</span>`
               : `<span style="color:#999;font-style:italic;">Not selected</span>`;
           } else {

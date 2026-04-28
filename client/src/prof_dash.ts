@@ -98,7 +98,7 @@ async function showDashboardView() {
     mainContent.innerHTML = `
         <header class="content-header">
             <div>
-                <h1 class="page-title">Welcome, Dr. Alberini</h1>
+                <h1 class="page-title">Welcome, Professor!</h1>
                 <p class="page-description">Manage your appointments and availability.</p>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
