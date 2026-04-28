@@ -3,20 +3,9 @@
  * Self-contained implementation with its own modal and button handlers
  */
 
-import { meetings, bookings, proposals, users } from './api';
+import { meetings, bookings, proposals, users, slots} from './api';
 
 // --- Interfaces ---
-
-// interface Appointment {
-//   _id: string;
-//   studentId: string;
-//   slotId: string;
-//   professorName: string;
-//   date: string;
-//   startTime: string;
-//   endTime: string;
-//   status: string;
-// }
 
 interface Appointment {
   bookingId: string;
@@ -34,6 +23,17 @@ interface ActiveOwner {
   email: string;
   job: string;
   publicId?: string;
+}
+
+
+interface AvailableSlot {
+  slotId: string;
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  isBooked: boolean;
+  isPrivate: boolean;
 }
 
 // --- Init ---
@@ -84,22 +84,132 @@ function handleSidebarNavigation(linkText: string) {
 
 // --- Button Handlers ---─
 
-function setupViewAndBookButtons() {
-  // Remove existing listeners to avoid duplicates
-  const buttons = document.querySelectorAll('.view-and-book-btn');
-  buttons.forEach((btn) => {
-    const newBtn = btn.cloneNode(true);
-    btn.parentNode?.replaceChild(newBtn, btn);
-  });
+// function setupViewAndBookButtons() {
+//   // Remove existing listeners to avoid duplicates
+//   const buttons = document.querySelectorAll('.view-and-book-btn');
+//   buttons.forEach((btn) => {
+//     const newBtn = btn.cloneNode(true);
+//     btn.parentNode?.replaceChild(newBtn, btn);
+//   });
 
-  // Add fresh listeners using event delegation
+//   // Add fresh listeners using event delegation
+//   document.addEventListener('click', (e) => {
+//     const target = e.target as HTMLElement;
+//     if (target.classList.contains('view-and-book-btn')) {
+//       e.preventDefault();
+//       const professorName = target.getAttribute('data-professor') || '';
+//       openBookingModal(professorName);
+//     }
+//   });
+// }
+let viewAndBookListenerAttached = false;
+function setupViewAndBookButtons() {
+  if (viewAndBookListenerAttached) return;
+  viewAndBookListenerAttached = true;
+
   document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains('view-and-book-btn')) {
-      e.preventDefault();
-      const professorName = target.getAttribute('data-professor') || '';
+    const target = (e.target as HTMLElement)?.closest(
+      '.view-and-book-btn',
+    ) as HTMLElement | null;
+    if (!target) return;
+    e.preventDefault();
+    const professorName = target.getAttribute('data-professor') || '';
+    const publicId = target.getAttribute('data-owner-public-id') || '';
+    if (!publicId) {
+      console.warn('No publicId on professor card; cannot fetch slots.');
       openBookingModal(professorName);
+      return;
     }
+    showOwnerSlotsView(publicId, professorName);
+  });
+}
+
+async function showOwnerSlotsView(publicId: string, professorName: string) {
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent) return;
+
+  mainContent.innerHTML = `
+    <header class="content-header">
+      <button id="back-to-browse" style="
+        background:none;border:none;color:var(--mcgill-red);cursor:pointer;
+        font-size:0.95rem;padding:0;margin-bottom:10px;
+      ">&larr; Back to Browse Professors</button>
+      <h1 class="page-title">${professorName}</h1>
+      <p class="page-description">Available office hour slots</p>
+    </header>
+    <div id="owner-slots-container" style="padding:20px;">
+      <p>Loading available slots...</p>
+    </div>
+  `;
+
+  document
+    .getElementById('back-to-browse')
+    ?.addEventListener('click', () => showBrowseProfessorsView());
+
+  const container = document.getElementById('owner-slots-container')!;
+
+  let slotsList: AvailableSlot[] = [];
+  try {
+    const data = await slots.getAvailableByOwner(publicId);
+    slotsList = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Failed to fetch slots:', error);
+    container.innerHTML =
+      '<p style="color:red;">Failed to load available slots.</p>';
+    return;
+  }
+
+  const bookable = slotsList.filter((s) => !s.isBooked);
+
+  if (bookable.length === 0) {
+    container.innerHTML =
+      '<p style="color:#666;">No available slots at this time.</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display:grid;gap:15px;">
+      ${bookable
+        .map(
+          (slot) => `
+        <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;
+          display:flex;justify-content:space-between;align-items:center;gap:15px;">
+          <div>
+            <h3 style="margin:0 0 8px 0;">${slot.title}</h3>
+            <p style="margin:3px 0;"><strong>Date:</strong>
+              ${new Date(slot.date).toLocaleDateString()}</p>
+            <p style="margin:3px 0;"><strong>Time:</strong>
+              ${slot.startTime} - ${slot.endTime}</p>
+          </div>
+          <button class="book-slot-btn" data-slot-id="${slot.slotId}" style="
+            padding:10px 20px;background:#D20A11;color:white;border:none;
+            border-radius:6px;cursor:pointer;font-weight:500;
+          ">Book</button>
+        </div>
+      `,
+        )
+        .join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.book-slot-btn').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const button = e.currentTarget as HTMLButtonElement;
+      const slotId = button.getAttribute('data-slot-id');
+      if (!slotId) return;
+      button.disabled = true;
+      button.textContent = 'Booking...';
+      try {
+        await slots.book(slotId);
+        alert('Slot booked successfully!');
+        showOwnerSlotsView(publicId, professorName);
+      } catch (error) {
+        console.error('Failed to book slot:', error);
+        alert('Failed to book slot. Please try again.');
+        button.disabled = false;
+        button.textContent = 'Book';
+      }
+    });
   });
 }
 
@@ -303,7 +413,7 @@ async function showBrowseProfessorsView() {
       <div class="prof-card">
         <h2 class="prof-name">${owner.name}</h2>
         <p class="prof-department">${owner.job ?? ''}</p>
-        <div class="prof-detail">${owner.email}</div>
+        <div class="prof-detail"><a href="mailto:${owner.email}">${owner.email}</a></p></div>
         <button class="card-action-button view-and-book-btn"
           data-professor="${owner.name}"
           data-owner-email="${owner.email}"

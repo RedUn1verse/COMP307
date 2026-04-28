@@ -139,23 +139,23 @@ Content-Type: application/json
 ###
 // ========================  SLOTS ========================
 
-POST {{baseUrl}}/slot/o1/create
+POST {{baseUrl}}/slot/o3/create
 Content-Type: application/json
 
 {
-  "title"     : "AHHH Quiz",
-  "date"      : "2026-03-03",
-  "startTime" : "09:00",
+  "title"     : "Last Minute Question For Midterm",
+  "date"      : "2026-05-05",
+  "startTime" : "11:00",
   "endTime"   : "13:00"
 }
 
 ###
 
-GET {{baseUrl}}/slot/o1/owned
+GET {{baseUrl}}/slot/o2/owned
 
 ###
-@slotIdActivate = r8efwakmmoad7ton
-PUT {{baseUrl}}/slot/o1/{{slotIdActivate}}/activate
+@slotIdActivate = 8bioay0zmoi2w01s
+PUT {{baseUrl}}/slot/o3/{{slotIdActivate}}/activate
 
 
 ###
