@@ -93,7 +93,7 @@ POST {{baseUrl}}/proposal/o1/create
 Content-Type: application/json
 
 {
-  "title": "300 Final",
+  "title": "307 Demo",
   "userNames": [
     "Alice Smith",
     "Bob Jones",
@@ -103,7 +103,7 @@ Content-Type: application/json
     {
       "date": "2026-05-04",
       "startTime": "09:00",
-      "endTime": "8:00"
+      "endTime": "10:00"
     },
     {
       "date": "2026-05-06",

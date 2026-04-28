@@ -28,12 +28,12 @@ class MeetingDto {
 
 
   static responseListForOwner(list) {
-    if(!list) return null;
+    if(!list) return [];
     return list.map(MeetingDto.responseForOwner);
   }
 
   static responseListForUser(list){
-    if(!list) return null;
+    if(!list) return [];
     return list.map(MeetingDto.responseForUser);
   }
 }

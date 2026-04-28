@@ -25,7 +25,6 @@ interface ActiveOwner {
   publicId?: string;
 }
 
-
 interface AvailableSlot {
   slotId: string;
   title: string;
@@ -34,6 +33,15 @@ interface AvailableSlot {
   endTime: string;
   isBooked: boolean;
   isPrivate: boolean;
+}
+
+interface MeetingRequest {
+  ownerName: string;
+  title: string;
+  message: string;
+  date: string;
+  startTime: string;
+  endTime: string;
 }
 
 // --- Init ---
@@ -103,6 +111,7 @@ function handleSidebarNavigation(linkText: string) {
 //   });
 // }
 let viewAndBookListenerAttached = false;
+
 function setupViewAndBookButtons() {
   if (viewAndBookListenerAttached) return;
   viewAndBookListenerAttached = true;
@@ -115,16 +124,21 @@ function setupViewAndBookButtons() {
     e.preventDefault();
     const professorName = target.getAttribute('data-professor') || '';
     const publicId = target.getAttribute('data-owner-public-id') || '';
+    const ownerEmail = target.getAttribute('data-owner-email') || '';
     if (!publicId) {
       console.warn('No publicId on professor card; cannot fetch slots.');
-      openBookingModal(professorName);
+      openBookingModal(professorName, ownerEmail);
       return;
     }
-    showOwnerSlotsView(publicId, professorName);
+    showOwnerSlotsView(publicId, professorName, ownerEmail);
   });
 }
 
-async function showOwnerSlotsView(publicId: string, professorName: string) {
+async function showOwnerSlotsView(
+  publicId: string,
+  professorName: string,
+  ownerEmail: string,
+) {
   const mainContent = document.querySelector('.main-content');
   if (!mainContent) return;
 
@@ -156,8 +170,7 @@ async function showOwnerSlotsView(publicId: string, professorName: string) {
 
   document
     .getElementById('request-meeting-btn')
-    ?.addEventListener('click', () => openBookingModal(professorName));
-
+    ?.addEventListener('click', () => openBookingModal(professorName, ownerEmail));
 
   const container = document.getElementById('owner-slots-container')!;
 
@@ -215,7 +228,7 @@ async function showOwnerSlotsView(publicId: string, professorName: string) {
       try {
         await slots.book(slotId);
         alert('Slot booked successfully!');
-        showOwnerSlotsView(publicId, professorName);
+        showOwnerSlotsView(publicId, professorName, ownerEmail);
       } catch (error) {
         console.error('Failed to book slot:', error);
         alert('Failed to book slot. Please try again.');
@@ -226,7 +239,8 @@ async function showOwnerSlotsView(publicId: string, professorName: string) {
   });
 }
 
-function openBookingModal(professorName: string) {
+
+function openBookingModal(professorName: string, ownerEmail: string) {
   // Remove any existing modal
   const existingModal = document.getElementById('booking-modal');
   if (existingModal) existingModal.remove();
@@ -330,11 +344,15 @@ function openBookingModal(professorName: string) {
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await handleBookingSubmit(form, modal);
+    await handleBookingSubmit(form, modal, ownerEmail);
   });
 }
 
-async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
+async function handleBookingSubmit(
+  form: HTMLFormElement,
+  modal: HTMLElement,
+  ownerEmail: string,
+) {
   const title = (form.querySelector('#booking-title') as HTMLInputElement).value;
   const date = (form.querySelector('#booking-date') as HTMLInputElement).value;
   const startTime = (form.querySelector('#booking-start-time') as HTMLInputElement).value;
@@ -346,11 +364,16 @@ async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
     return;
   }
 
+  if (!ownerEmail) {
+    alert('Cannot determine the professor for this request.');
+    return;
+  }
+
   try {
     const bookingData = {
-      ownerEmail: 'carol@mcgill.ca',
+      ownerEmail,
       title,
-      message: notes || 'Office hours booking',
+      message: notes || 'No notes',
       date,
       startTime,
       endTime,
@@ -369,7 +392,6 @@ async function handleBookingSubmit(form: HTMLFormElement, modal: HTMLElement) {
     alert('Failed to book appointment. Please try again.');
   }
 }
-
 // --- Views ---─
 
 // 
@@ -458,66 +480,91 @@ async function showMyAppointmentsView() {
       <p>Loading appointments...</p>
     </div>
   `;
-  console.log("hello");
   try {
-    const appointments: Appointment[] = await bookings.getMyBookings();
-    
+    const [appointmentsData, meetingsData] = await Promise.all([
+      bookings.getMyBookings().catch(() => []),
+      meetings.getMe().catch(() => []),
+    ]);
+    const appointments: Appointment[] = Array.isArray(appointmentsData)
+      ? appointmentsData
+      : [];
+    const pendingMeetings: MeetingRequest[] = Array.isArray(meetingsData)
+      ? meetingsData
+      : [];
+
     const container = document.getElementById('appointments-container')!;
 
-    if (appointments && appointments.length > 0) {
-      let html = '<div style="display:grid;gap:15px;">';
-      appointments.forEach((apt) => {
-        html += `
-          <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;
-            display:flex;justify-content:space-between;align-items:flex-start;gap:15px;">
-            <div>
-              <h3 style="margin:0 0 10px 0;">${apt.ownerName}</h3>
-              <p style="margin:5px 0;"><strong>Date:</strong>
-                ${new Date(apt.date).toLocaleDateString()}</p>
-              <p style="margin:5px 0;"><strong>Time:</strong>
-                ${apt.startTime} - ${apt.endTime}</p>
-              <p style="margin:5px 0;"><strong>Status:</strong>
-                <span style="color:${'green'};">
-                  ${"confirmed"}
-                <p style="margin:5px 0;"><strong>Email:</strong>
-                <a href="mailto:${apt.ownerEmail}">${apt.ownerEmail}</a></p>
-                </span>
-              </p>
-            </div>
-            <button class="cancel-booking-btn" data-booking-id="${apt.bookingId}" style="
-              padding:10px 20px;background:#fff;color:#D20A11;border:1px solid #D20A11;
-              border-radius:6px;cursor:pointer;font-weight:500;
-            ">Cancel Booking</button>
-          </div>
-        `;
-      });
-      html += '</div>';
-      container.innerHTML = html;
-
-      container.querySelectorAll('.cancel-booking-btn').forEach((btn) => {
-        btn.addEventListener('click', async (e) => {
-          const button = e.currentTarget as HTMLButtonElement;
-          const bookingId = button.getAttribute('data-booking-id');
-          if (!bookingId) return;
-          if (!confirm('Cancel this booking?')) return;
-          button.disabled = true;
-          button.textContent = 'Cancelling...';
-          try {
-            await bookings.cancelBooking(bookingId);
-            alert('Booking cancelled.');
-            showMyAppointmentsView();
-          } catch (error) {
-            console.error('Failed to cancel booking:', error);
-            alert('Failed to cancel booking. Please try again.');
-            button.disabled = false;
-            button.textContent = 'Cancel Booking';
-          }
-        });
-      });
-    } else {
+    if (appointments.length === 0 && pendingMeetings.length === 0) {
       container.innerHTML =
         '<p style="padding:20px;text-align:center;color:#666;">No appointments booked yet.</p>';
+      return;
     }
+
+    let html = '<div style="display:grid;gap:15px;">';
+
+    appointments.forEach((apt) => {
+      html += `
+        <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#f9f9f9;
+          display:flex;justify-content:space-between;align-items:flex-start;gap:15px;">
+          <div>
+            <h3 style="margin:0 0 10px 0;">${apt.ownerName}</h3>
+            <p style="margin:5px 0;"><strong>Title:</strong> ${apt.title}</p>
+            <p style="margin:5px 0;"><strong>Date:</strong>
+              ${new Date(apt.date).toLocaleDateString()}</p>
+            <p style="margin:5px 0;"><strong>Time:</strong>
+              ${apt.startTime} - ${apt.endTime}</p>
+            <p style="margin:5px 0;"><strong>Status:</strong>
+              <span style="color:green;">confirmed</span></p>
+            <p style="margin:5px 0;"><strong>Email:</strong>
+              <a href="mailto:${apt.ownerEmail}">${apt.ownerEmail}</a></p>
+          </div>
+          <button class="cancel-booking-btn" data-booking-id="${apt.bookingId}" style="
+            padding:10px 20px;background:#fff;color:#D20A11;border:1px solid #D20A11;
+            border-radius:6px;cursor:pointer;font-weight:500;
+          ">Cancel Booking</button>
+        </div>
+      `;
+    });
+
+    pendingMeetings.forEach((mtg) => {
+      html += `
+        <div style="border:1px solid #ddd;padding:15px;border-radius:8px;background:#fffaf0;">
+          <h3 style="margin:0 0 10px 0;">${mtg.ownerName}</h3>
+          <p style="margin:5px 0;"><strong>Title:</strong> ${mtg.title}</p>
+          <p style="margin:5px 0;"><strong>Date:</strong>
+            ${new Date(mtg.date).toLocaleDateString()}</p>
+          <p style="margin:5px 0;"><strong>Time:</strong>
+            ${mtg.startTime} - ${mtg.endTime}</p>
+          <p style="margin:5px 0;"><strong>Message:</strong> ${mtg.message ?? ''}</p>
+          <p style="margin:5px 0;"><strong>Status:</strong>
+            <span style="color:#b58900;">pending</span></p>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    container.querySelectorAll('.cancel-booking-btn').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const button = e.currentTarget as HTMLButtonElement;
+        const bookingId = button.getAttribute('data-booking-id');
+        if (!bookingId) return;
+        if (!confirm('Cancel this booking?')) return;
+        button.disabled = true;
+        button.textContent = 'Cancelling...';
+        try {
+          await bookings.cancelBooking(bookingId);
+          alert('Booking cancelled.');
+          showMyAppointmentsView();
+        } catch (error) {
+          console.error('Failed to cancel booking:', error);
+          alert('Failed to cancel booking. Please try again.');
+          button.disabled = false;
+          button.textContent = 'Cancel Booking';
+        }
+      });
+    });
   } catch (error) {
     console.error('Failed to fetch appointments:', error);
     document.getElementById('appointments-container')!.innerHTML =
@@ -562,27 +609,47 @@ async function showGroupPollsView() {
               <div style="display:grid;gap:10px;">
         `;
 
+        const hasVoted = (poll.options || []).some((o: any) => o.myVote);
+
         // Display voting options
         for (const option of poll.options || []) {
-          const voteCount = option.voteCount || 0;
-          const votePercentage = Math.round((voteCount / 100) * 100) || 0;
-          
+          const voted = !!option.myVote;
+          const cardBorder = voted ? '2px solid var(--mcgill-red)' : '1px solid #e0e0e0';
+
+          let rightHtml: string;
+          if (hasVoted) {
+            rightHtml = voted
+              ? `<span style="padding:8px 16px;background:#fff;color:var(--mcgill-red);
+                  border:1px solid var(--mcgill-red);border-radius:4px;font-weight:600;">✓ Voted</span>`
+              : `<span style="color:#999;font-style:italic;">Not selected</span>`;
+          } else {
+            rightHtml = `<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
+              <input type="checkbox" class="vote-option-checkbox"
+                data-proposal-id="${poll.proposalId}" data-option-id="${option.optionId}"
+                style="width:18px;height:18px;cursor:pointer;accent-color:var(--mcgill-red);">
+              Select
+            </label>`;
+          }
+
           html += `
-                <div style="background:white;border:1px solid #e0e0e0;border-radius:6px;padding:12px;">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                <div style="background:white;border:${cardBorder};border-radius:6px;padding:12px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;">
                     <div>
                       <p style="margin:0;font-weight:500;">${option.date}</p>
                       <p style="margin:0;font-size:0.9rem;color:#666;">${option.startTime} - ${option.endTime}</p>
                     </div>
-                    <button class="vote-option-btn" data-proposal-id="${poll.proposalId}" data-option-id="${option.optionId}" 
-                      style="padding:8px 16px;background:var(--mcgill-red);color:white;border:none;border-radius:4px;cursor:pointer;font-weight:500;">
-                      Vote (${voteCount})
-                    </button>
-                  </div>
-                  <div style="background:#f0f0f0;height:6px;border-radius:3px;overflow:hidden;">
-                    <div style="background:var(--mcgill-red);height:100%;width:${votePercentage}%;"></div>
+                    ${rightHtml}
                   </div>
                 </div>
+          `;
+        }
+
+        if (!hasVoted) {
+          html += `
+                <button class="submit-votes-btn" data-proposal-id="${poll.proposalId}" style="
+                  margin-top:10px;padding:10px 20px;background:var(--mcgill-red);color:white;
+                  border:none;border-radius:6px;cursor:pointer;font-weight:500;align-self:flex-start;
+                ">Submit Votes</button>
           `;
         }
 
@@ -596,29 +663,34 @@ async function showGroupPollsView() {
       html += '</div>';
       container.innerHTML = html;
 
-      // Add vote button listeners
-      document.querySelectorAll('.vote-option-btn').forEach((btn) => {
+      container.querySelectorAll('.submit-votes-btn').forEach((btn) => {
         btn.addEventListener('click', async (e) => {
-          const button = e.target as HTMLButtonElement;
+          const button = e.currentTarget as HTMLButtonElement;
           const proposalId = button.getAttribute('data-proposal-id');
-          const optionId = button.getAttribute('data-option-id');
-          
-          if (proposalId && optionId) {
-            try {
-              button.disabled = true;
-              button.textContent = 'Voting...';
-              
-              await proposals.vote(proposalId, [optionId]);
-              
-              alert('Your vote has been recorded!');
-              await showGroupPollsView(); // Refresh the view
-            } catch (error) {
-              console.error('Failed to vote:', error);
-              alert('Failed to record your vote. Please try again.');
-              button.disabled = false;
-              const count = button.textContent?.match(/\d+/)?.[0] || '0';
-              button.textContent = `Vote (${count})`;
-            }
+          if (!proposalId) return;
+
+          const checked = container.querySelectorAll<HTMLInputElement>(
+            `.vote-option-checkbox[data-proposal-id="${proposalId}"]:checked`,
+          );
+          const optionIds = Array.from(checked)
+            .map((cb) => cb.getAttribute('data-option-id'))
+            .filter((id): id is string => !!id);
+
+          if (optionIds.length === 0) {
+            alert('Please select at least one option.');
+            return;
+          }
+
+          button.disabled = true;
+          button.textContent = 'Submitting...';
+          try {
+            await proposals.vote(proposalId, optionIds);
+            await showGroupPollsView();
+          } catch (error) {
+            console.error('Failed to vote:', error);
+            alert('Failed to record your votes. Please try again.');
+            button.disabled = false;
+            button.textContent = 'Submit Votes';
           }
         });
       });
@@ -632,6 +704,7 @@ async function showGroupPollsView() {
       '<p style="padding:20px;color:red;">Failed to load group polls.</p>';
   }
 }
+
 
 function showHelpAndSupportView() {
   const mainContent = document.querySelector('.main-content');
