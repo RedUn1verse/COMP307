@@ -766,6 +766,34 @@ function openNewProposalModal() {
                     </div>
                 </div>
 
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="proposal-option-3-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Option 3 Date</label>
+                        <input type="date" id="proposal-option-3-date" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div>
+                        <label for="proposal-option-3-start" style="display: block; margin-bottom: 5px; font-weight: 500;">Start Time</label>
+                        <input type="time" id="proposal-option-3-start" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="proposal-option-1-end" style="display: block; margin-bottom: 5px; font-weight: 500;">End Time</label>
+                        <input type="time" id="proposal-option-1-end" required style="
+                            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                            box-sizing: border-box;
+                        ">
+                    </div>
+                    <div></div>
+                </div>
+
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
                     <button type="submit" style="
                         flex: 1; padding: 12px; background: var(--mcgill-red); color: white; border: none;
