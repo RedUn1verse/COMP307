@@ -46,19 +46,23 @@
             <div id="sidebar-active-slots" style="
                 display: flex; 
                 flex-direction: column; 
-                gap: 8px; 
-                max-height: 350px; 
-                overflow-y: auto; 
-                padding-right: 5px;
+                gap: 8px;
+                max-height: 250px; /* Limits the height of the list */
+                overflow-y: auto;  /* Enables vertical scrolling */
+                padding-right: 5px; /* Provides space for the scrollbar */
                 scrollbar-width: thin;
             ">
-                <div style="padding: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7); text-align: center;">Loading slots...</div>
+                <div style="padding: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7);">
+                    Loading active slots...
+                </div>
             </div>
             
+            <!--
             <div class="sidebar-menu-label" style="margin-top: 20px;">Booked Meetings</div>
             <div id="sidebar-booked-meetings" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
                 <div style="padding: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.7); text-align: center;">Loading...</div>
-            </div>
+            </div>*/
+             -->
 
             <div class="sidebar-menu-label" style="margin-top: 20px;">Quick Links</div>
             <a href="#" class="sidebar-link">Help & Support</a>

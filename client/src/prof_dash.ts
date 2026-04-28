@@ -398,7 +398,7 @@ async function loadRecurringView() {
                                 ${slot.isPrivate ? 'PRIVATE' : 'PUBLIC'}
                             </span>
                         </div>
-                        <p style="margin: 8px 0; font-size: 0.95rem;"><strong>⏰</strong> ${slot.startTime} - ${slot.endTime}</p>
+                        <p style="margin: 8px 0; font-size: 0.95rem;"><strong></strong> ${slot.startTime} - ${slot.endTime}</p>
                         ${isBooked ? `<p style="margin: 8px 0; font-size: 0.9rem; color: #666;"><strong>✓ Booked</strong> (${bookingCount})</p>` : `<p style="margin: 8px 0; font-size: 0.9rem; color: #999;">Available</p>`}
                         <button class="delete-slot-btn" data-slot-id="${slot.slotId}" style="margin-top: 10px; padding: 8px 12px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Cancel Slot</button>
                     </div>
