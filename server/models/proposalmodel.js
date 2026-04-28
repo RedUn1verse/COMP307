@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const db = require('./dummy_db');
 const { getDB } = require('../db');
 const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);

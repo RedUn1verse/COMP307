@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const SlotModel    = require('../models/slotmodel');
 const UserModel    = require('../models/usermodel');
 const BookingModel = require('../models/bookingmodel');

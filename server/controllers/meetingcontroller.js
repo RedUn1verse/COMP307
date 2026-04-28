@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const MeetingModel        = require('../models/meetingmodel');
 const UserModel        = require('../models/usermodel');
 const MeetingDto          = require('../dtos/meetingdto');

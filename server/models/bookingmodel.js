@@ -81,7 +81,8 @@ async delete(bookingId, userId, ownerId) {
 
 	return true;
 },
-
+// Author: Christina Vuong
+// Student ID: 260929195
 async getListBooking(bookingIds) {
 	const db = getDB();
 	if (!Array.isArray(bookingIds) || bookingIds.length === 0) return [];

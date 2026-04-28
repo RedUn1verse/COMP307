@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 class SlotResponseDto {
   constructor(slot) {
     this.slotId = slot.slotId;

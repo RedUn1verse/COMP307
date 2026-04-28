@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const express = require('express');
 const UserController   = require('../controllers/usercontroller');
 const { authenticate } = require('./auth');

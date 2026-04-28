@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const buildMailto = (to, subject, body) => {
   
   let cleanTo = to.trim().toLowerCase();

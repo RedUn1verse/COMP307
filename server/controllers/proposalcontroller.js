@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const db = require('../models/dummy_db');
 const ProposalModel = require('../models/proposalmodel');
 const ProposalDto   = require('../dtos/proposaldto');

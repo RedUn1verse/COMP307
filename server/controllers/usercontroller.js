@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const UserModel = require('../models/usermodel');
 const UserDto = require('../dtos/userdto');
 

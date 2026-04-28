@@ -1,3 +1,5 @@
+// Author: Christina Vuong
+// Student ID: 260929195
 const SlotDto = require('./slotdto');
 
 class BookingDto {
