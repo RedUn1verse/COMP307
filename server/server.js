@@ -1,3 +1,5 @@
+//Contributor(s): Shane Kelly (261011914)
+
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');

@@ -3,6 +3,9 @@
  * Backend runs on http://127.0.0.1:3000
  * Vite dev server proxies requests to /auth, /bookings, /users to the backend
  */
+
+//Contributor(s): Shane Kelly (261011914)
+
 import { getUserId } from './auth';
 const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname !== '127.0.0.1' 
   ? 'https://winter2026-comp307-group09.cs.mcgill.ca'

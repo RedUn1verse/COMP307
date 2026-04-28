@@ -1,3 +1,4 @@
+//Contributor(s): Shane Kelly (261011914)
 const { getDB } = require('../db');
 const UserModel = require('./usermodel');
 const genId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);

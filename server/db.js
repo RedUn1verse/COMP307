@@ -1,3 +1,4 @@
+// Contributors: Shane Kelly (261011914)
 const { MongoClient } = require('mongodb');
 
 const client = new MongoClient('mongodb://localhost:27017');

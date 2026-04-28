@@ -1,3 +1,5 @@
+// Contributor(s): Shane Kelly (261011914)
+
 const loginForm = document.querySelector('form');
 
 loginForm?.addEventListener('submit', async (e) => {
