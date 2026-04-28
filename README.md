@@ -20,4 +20,4 @@ If you receive errors, it is likely some packages are missing. Run ``` npm insta
 ### Christina: 
 *Back-end.*
 ### Delana: 
-*Front-end.* designed front-end and created HTML files. Connected front and back-end through prof_dash.ts, student_dashboard.ts. 
+*Front-end.* Designed front-end and created HTML files. Connected front and back-end through prof_dash.ts, student_dashboard.ts. 

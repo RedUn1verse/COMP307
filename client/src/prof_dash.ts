@@ -1055,6 +1055,9 @@ async function handleProposalCreation(form: HTMLFormElement, modal: HTMLElement)
     const option2Date = (form.querySelector('#proposal-option-2-date') as HTMLInputElement).value;
     const option2Start = (form.querySelector('#proposal-option-2-start') as HTMLInputElement).value;
     const option2End = (form.querySelector('#proposal-option-2-end') as HTMLInputElement).value;
+    const option3Date = (form.querySelector('#proposal-option-3-date') as HTMLInputElement).value;
+    const option3Start = (form.querySelector('#proposal-option-3-start') as HTMLInputElement).value;
+    const option3End = (form.querySelector('#proposal-option-3-end') as HTMLInputElement).value;
 
     const invitees = inviteesRaw
         .split(/[,\n]/)
@@ -1067,6 +1070,9 @@ async function handleProposalCreation(form: HTMLFormElement, modal: HTMLElement)
     }
     if (option2Date && option2Start && option2End) {
         options.push({ date: option2Date, startTime: option2Start, endTime: option2End });
+    }
+    if (option3Date && option3Start && option3End) {
+        options.push({ date: option3Date, startTime: option3Start, endTime: option3End });
     }
 
     if (!title || invitees.length === 0 || options.length === 0) {
