@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('accessToken', 'temp-token-for-testing');
     localStorage.setItem('userRole', 'owner');
     localStorage.setItem('userId', 'o1');
+    localStorage.setItem('userName', 'Carol Smith');
     localStorage.setItem('userEmail', 'carol@mcgill.ca');
 
     showDashboardView();

@@ -101,8 +101,8 @@
         // localStorage calls for sidebar info
         const sidebarUserName = document.getElementById('sidebar-user-name');
         const sidebarUserEmail = document.getElementById('sidebar-user-email');
-        if (sidebarUserName) sidebarUserName.textContent = localStorage.getItem('userName') || '—';
-        if (sidebarUserEmail) sidebarUserEmail.textContent = localStorage.getItem('userEmail') || '—';
+        if (sidebarUserName) sidebarUserName.textContent = localStorage.getItem('userName') || '-'; // TODO: this is falling back to '-', fix userName not being set in localStorage on signin
+        if (sidebarUserEmail) sidebarUserEmail.textContent = localStorage.getItem('userEmail') || '-';
     </script>
 </body>
 </html>

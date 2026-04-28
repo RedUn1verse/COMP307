@@ -14,6 +14,20 @@ This runs the backend. To start the frontend:
 
 If you receive errors, it is likely some packages are missing. Run ``` npm install ``` and try again. 
 
+## Try It Out:
+There are a few users we have created for the sake of testing. Use the following email and password combinations to access the system without needing to create a new account. This also allows you to see what an 'active' account looks like, with some `Meeting Requests` and `Office Hours` already populating the account.
+
+### Access Student Dash:
+``` bash
+username: alice@mail.mcgill.ca
+password: Password123
+```
+### Access Professor Dash:
+``` bash
+username: carol@mcgill.ca
+password: Password123
+```
+
 ## Work Division:
 ### Shane: 
 *Team lead.*
