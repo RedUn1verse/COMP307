@@ -737,7 +737,7 @@ function openNewProposalModal() {
                 </div>
 
                 <div style="border-top: 1px solid #eee; padding-top: 10px;">
-                    <div style="margin-bottom: 10px; font-weight: 600;">Optional second option</div>
+                    <div style="margin-bottom: 10px; font-weight: 600;"> Optional second and third option</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <div>
                             <label for="proposal-option-2-date" style="display: block; margin-bottom: 5px; font-weight: 500;">Option 2 Date</label>
