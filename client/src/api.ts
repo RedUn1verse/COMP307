@@ -98,8 +98,12 @@ export const bookings = {
     }),
   delete: (id: string) =>
     apiCall(`/booking/${id}`, { method: 'DELETE' }),
-  cancelBooking: (bookingId: string) =>
-    apiCall(`/booking/${bookingId}`, { method: 'DELETE' }),
+
+  cancelBooking: (bookingId: string) => {
+    const userId = getUserId();
+    if (!userId) throw new Error('No user ID found');
+    return apiCall(`/booking/${userId}/${bookingId}`, { method: 'DELETE' });
+  },
   emailBookedUser: (bookingId: string) =>
     apiCall(`/booking/${bookingId}/email`, { method: 'POST' }),
 };
