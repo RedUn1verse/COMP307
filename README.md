@@ -37,3 +37,5 @@ AI and boilerplate disclosure: Non handwritten code within my contribution mainl
 *Back-end.*
 ### Delana: 
 *Front-end.* Designed front-end and created HTML files. Connected front and back-end through prof_dash.ts, student_dashboard.ts. 
+
+AI and boilerplate disclosure: Github Copilot's inline suggestions were used to fill out large, standard blocks of HTML code. Aside from this, AI was used for debugging. 
